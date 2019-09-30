@@ -1,0 +1,30 @@
+{
+    "name": "gecche/laravel-breeze",
+    "description": "Collection of traits for extending Laravel Eloquent models",
+    "keywords": ["laravel", "eloquent", "model"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Giacomo Terreni",
+            "email": "giacomo.terreni@gmail.com"
+        }
+    ],
+    "require": {
+        "laravel/framework": "5.5.*"
+    },
+    "autoload": {
+        "psr-4": {
+            "Gecche\\Breeze\\": "src/"
+        },
+        "files": [
+
+        ]
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+
+            ]
+        }
+    }
+}
