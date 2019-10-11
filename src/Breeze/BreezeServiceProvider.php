@@ -3,10 +3,8 @@
 namespace Gecche\Breeze;
 
 use Gecche\Breeze\Console\CompileRelationsCommand;
-use Illuminate\Contracts\Auth\Access\Gate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Arr;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\ServiceProvider;
 
 class BreezeServiceProvider extends ServiceProvider
@@ -80,20 +78,6 @@ class BreezeServiceProvider extends ServiceProvider
         Builder::macro('updateOwnerships', function (array $values) {
             return $this->toBase()->update($this->addUpdatedByColumn($this->addUpdatedAtColumn($values)));
         });
-
-
-        Builder::macro('acl', function ($user = null, $ability = 'acl') {
-
-            $model = $this->model;
-            $arguments = [get_class($model), $this];
-
-            if (is_null($user)) {
-                $user = Auth::user();
-            }
-
-            return app(Gate::class)->forUser($user)->acl($ability, $arguments);
-        });
-
 
     }
 
