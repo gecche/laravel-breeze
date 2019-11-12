@@ -3,17 +3,18 @@
 namespace Gecche\Breeze\Relations;
 
 use Gecche\Breeze\Relations\Concerns\InteractsWithPivotTableOwnerships;
-use Illuminate\Database\Eloquent\Relations\Concerns\InteractsWithPivotTable;
+use Illuminate\Database\Eloquent\Relations\Concerns\InteractsWithPivotTable as InteractsWithPivotTable;
 
 class BelongsToMany extends \Illuminate\Database\Eloquent\Relations\BelongsToMany
 {
 
-    use InteractsWithPivotTableOwnerships {
-        InteractsWithPivotTableOwnerships::updateExistingPivot insteadof InteractsWithPivotTable;
-        InteractsWithPivotTableOwnerships::formatAttachRecords insteadof InteractsWithPivotTable;
-        InteractsWithPivotTableOwnerships::formatAttachRecord insteadof InteractsWithPivotTable;
-        InteractsWithPivotTableOwnerships::baseAttachRecord insteadof InteractsWithPivotTable;
-    }
+    use InteractsWithPivotTableOwnerships;
+//    {
+//        InteractsWithPivotTableOwnerships::updateExistingPivot insteadof InteractsWithPivotTable;
+//        InteractsWithPivotTableOwnerships::formatAttachRecords insteadof InteractsWithPivotTable;
+//        InteractsWithPivotTableOwnerships::formatAttachRecord insteadof InteractsWithPivotTable;
+//        InteractsWithPivotTableOwnerships::baseAttachRecord insteadof InteractsWithPivotTable;
+//    }
 
     /**
      * Indicates if ownerships are available on the pivot table.

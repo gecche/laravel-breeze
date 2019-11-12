@@ -79,7 +79,7 @@ trait InteractsWithPivotTableOwnerships
      * @param  bool   $hasTimestamps
      * @return array
      */
-    protected function formatAttachRecord($key, $value, $attributes, $hasTimestamps, $hasOwnerships)
+    protected function formatAttachRecord($key, $value, $attributes, $hasTimestamps, $hasOwnerships = false)
     {
         list($id, $attributes) = $this->extractAttachIdAndAttributes($key, $value, $attributes);
 
@@ -97,7 +97,7 @@ trait InteractsWithPivotTableOwnerships
      * @param  bool  $timed
      * @return array
      */
-    protected function baseAttachRecord($id, $timed, $owned)
+    protected function baseAttachRecord($id, $timed, $owned = false)
     {
         $record[$this->relatedPivotKey] = $id;
 
