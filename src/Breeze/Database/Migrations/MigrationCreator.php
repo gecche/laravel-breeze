@@ -53,8 +53,8 @@ class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
      */
     protected function populateStub($name, $stub, $table, $timestamps = 'yes', $ownerships = 'no')
     {
-        var_dump($timestamps);
-        var_dump($ownerships);
+//        var_dump($timestamps);
+//        var_dump($ownerships);
         $stub = str_replace('DummyClass', $this->getClassName($name), $stub);
 
         // Here we will replace the table place-holders with the table specified by
