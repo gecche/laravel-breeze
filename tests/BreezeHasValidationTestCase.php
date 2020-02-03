@@ -63,65 +63,6 @@ class BreezeHasValidationTestCase extends \Orchestra\Testbench\TestCase
             'nation' => 'UK',
             'birthdate' => '1965-07-31',
         ]);
-
-        Author::create([
-            'code' => 'A00003',
-            'name' => 'Stephen',
-            'surname' => 'King',
-            'nation' => 'US',
-            'birthdate' => '1947-09-21',
-        ]);
-
-        Author::create([
-            'code' => 'A00004',
-            'name' => 'Ken',
-            'surname' => 'Follett',
-            'nation' => 'UK',
-            'birthdate' => '1949-06-05',
-        ]);
-
-
-        Book::create([
-            'title' => 'La divina commedia',
-            'language' => 'IT',
-            'author_id' => 1,
-        ]);
-
-        Book::create([
-            'title' => 'Fall of giants',
-            'language' => 'EN',
-            'author_id' => 4,
-        ]);
-
-        Book::create([
-            'title' => 'The Pillars of the Earth',
-            'language' => 'EN',
-            'author_id' => 4,
-        ]);
-
-        Book::create([
-            'title' => 'Misery',
-            'language' => 'EN',
-            'author_id' => 3,
-        ]);
-
-        Book::create([
-            'title' => 'Harry Potter and the Philosopher\'s Stone',
-            'language' => 'EN',
-            'author_id' => 2,
-        ]);
-
-        Book::create([
-            'title' => 'Harry Potter and the Chamber of Secrets',
-            'language' => 'EN',
-            'author_id' => 2,
-        ]);
-
-        Book::create([
-            'title' => 'Harry Potter adn the Prisoner fo Azkaban',
-            'language' => 'EN',
-            'author_id' => 2,
-        ]);
     }
 
     /**

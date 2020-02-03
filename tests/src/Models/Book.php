@@ -1,5 +1,6 @@
 <?php namespace Gecche\Breeze\Tests\Models;
 
+use Gecche\Breeze\Breeze;
 use Illuminate\Database\Eloquent\Model;
 
 /**
@@ -8,7 +9,7 @@ use Illuminate\Database\Eloquent\Model;
  * @package Gecche\AclTest\Tests\Models
  *
  */
-class Book extends Model
+class Book extends Breeze
 {
 
     /**
@@ -26,6 +27,16 @@ class Book extends Model
     public $timestamps = false;
 
     public $guarded = ['id'];
+
+    public static $relationsData = [
+//        'books' => [self::HAS_ONE, 'related' => 'Address', 'foreignKey' => 'pippo', 'localKey' => 'ciccio'],
+//        'user' => [self::HAS_ONE, 'related' => 'AddressTwo', 'localKey' => 'ciccio'],
+//        'orders' => [self::HAS_MANY, 'related' => 'Order', 'foreignKey' => 'pippo', 'localKey' => 'ciccio'],
+//        'attachments' => [self::BELONGS_TO_MANY, 'related' => 'App\Models\Attachment', 'table' => 'news_attachments'],
+//        'userUpdatedBy' => [self::BELONGS_TO, 'related' => 'App\Models\User', 'foreignKey' => 'updated_by'],
+//        'userCreatedBy' => [self::BELONGS_TO, 'related' => 'App\Models\User', 'foreignKey' => 'created_by'],
+        'author' => [self::BELONGS_TO, 'related' => Author::class],
+    ];
 
     public function author() {
 

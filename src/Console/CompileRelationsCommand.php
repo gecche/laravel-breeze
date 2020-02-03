@@ -19,7 +19,7 @@ class CompileRelationsCommand extends Command
      */
     protected $signature = 'breeze:relations
                     {model? : Only compile relations for the specified model}
-                    {--dir= : Directory of the models (relative to app}
+                    {--dir= : Directory of the models}
                     {--force : Overwrite existing relation traits by default}';
 
     /**
@@ -126,11 +126,11 @@ class CompileRelationsCommand extends Command
 
         $this->dir = $this->option('dir') ?:
             (config('breeze.default-models-dir') ?:
-                '');
+                base_path('app'));
 
         $this->fullDir = app_path($this->dir);
 
-        $this->namespace = $this->getAppNamespace() . config('breeze.namespace');
+        $this->namespace = config('breeze.namespace') ?: $this->getAppNamespace();
 
         $modelName = $this->argument('model');
 

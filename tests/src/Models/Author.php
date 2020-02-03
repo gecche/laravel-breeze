@@ -53,4 +53,5 @@ class Author extends Breeze
             'surname.required' => 'ok, at least now you have to set a surname!',
         ],
     ];
+
 }
