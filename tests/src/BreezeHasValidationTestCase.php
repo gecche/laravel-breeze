@@ -8,6 +8,7 @@
 
 namespace Gecche\Breeze\Tests;
 
+use Gecche\Breeze\Breeze;
 use Gecche\Breeze\Tests\Models\Author;
 use Gecche\Breeze\Tests\Models\Book;
 use Gecche\Breeze\Tests\Models\User;
@@ -15,6 +16,7 @@ use Gecche\Breeze\BreezeServiceProvider as ServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class BreezeHasValidationTestCase extends \Orchestra\Testbench\TestCase
 {
@@ -175,8 +177,8 @@ class BreezeHasValidationTestCase extends \Orchestra\Testbench\TestCase
 
         $expectedValidationData = [
             'rules' => [
-                'surname' => 'required',
-                'code' => 'required|unique:authors,code,1,id',
+                'surname' => ['required'],
+                'code' => ['required','unique:authors,code,1,id'],
             ],
             'customMessages' => [],
             'customAttributes' => [],
@@ -217,8 +219,8 @@ class BreezeHasValidationTestCase extends \Orchestra\Testbench\TestCase
 
         $expectedValidationData = [
             'rules' => [
-                'surname' => 'required',
-                'code' => 'required|unique:authors,code,1,id',
+                'surname' => ['required'],
+                'code' => ['required','unique:authors,code,1,id'],
             ],
             'customMessages' => [
                 'surname.required' => 'you must insert an author with a surname',
@@ -236,9 +238,9 @@ class BreezeHasValidationTestCase extends \Orchestra\Testbench\TestCase
 
         $expectedValidationData = [
             'rules' => [
-                'surname' => 'required',
-                'code' => 'required|unique:authors,code,1,id',
-                'birthdate' => 'required',
+                'surname' => ['required'],
+                'code' => ['required','unique:authors,code,1,id'],
+                'birthdate' => ['required'],
             ],
             'customMessages' => [
                 'surname.required' => 'ok, at least now you have to set a surname!',
@@ -265,9 +267,9 @@ class BreezeHasValidationTestCase extends \Orchestra\Testbench\TestCase
 
         $expectedValidationData = [
             'rules' => [
-                'surname' => 'required',
-                'code' => 'required|unique:authors,code,1,id',
-                'name' => 'required',
+                'surname' => ['required'],
+                'code' => ['required','unique:authors,code,1,id'],
+                'name' => ['required'],
             ],
             'customMessages' => [],
             'customAttributes' => [],
@@ -282,9 +284,9 @@ class BreezeHasValidationTestCase extends \Orchestra\Testbench\TestCase
 
         $expectedValidationData = [
             'rules' => [
-                'surname' => 'required',
-                'code' => 'required|unique:authors,code,1,id',
-                'name' => 'required',
+                'surname' => ['required'],
+                'code' => ['required','unique:authors,code,1,id'],
+                'name' => ['required'],
             ],
             'customMessages' => [
                 'surname.required' => 'you must insert an author with a surname',
@@ -377,32 +379,85 @@ class BreezeHasValidationTestCase extends \Orchestra\Testbench\TestCase
         $this->assertEquals($validator->errors()->toArray(), $errorsExpected);
 
     }
-//    /*
-//     * Test Author's policy with user 2
-//     */
-//    public function testAuthorPolicyUser2()
-//    {
-//        /*
-//         * Login with user 2
-//         */
-//        $user = Auth::loginUsingId(2);
-//
-//        $this->assertAuthenticatedAs($user);
-//
-//
-//        /*
-//         * We expect the full list of Authors in standard context
-//         */
-//        $authors = Author::acl()->get()->toArray();
-//        $this->assertEquals(count($authors), 4);
-//
-//        /*
-//         * We expect only Dante Alighieri in editing context
-//         */
-//        $authors = Author::acl(null,'editing')->get()->pluck('surname', 'id')->toArray();
-//
-//        $this->assertEquals([1 => 'Alighieri'], $authors);
-//    }
+
+    /*
+    * Test HasValidation validate method with building exclusion rules
+    */
+    public function testValidateMethodNoException()
+    {
+
+        $author = Author::find(1);
+
+        /*
+         * We expect no exception because the model with id 1
+         * has the code A000001, but it is magically excluded
+         * within the unique rule
+         */
+
+        $author->code = ['A00001'];
+
+        $author->validate(true);
+
+        $this->assertInstanceOf(Breeze::class,$author);
+
+
+    }
+
+    /*
+    * Test HasValidation validate method without building exclusion rules
+    */
+    public function testValidateMethodException()
+    {
+
+        $this->expectException(ValidationException::class);
+
+        $author = Author::find(1);
+
+        /*
+          * We expect exception is thrown because the model with id 1
+          * has the code A000001 and it is involved in the unique rule
+          */
+
+        $author->code = ['A00001'];
+
+        $author->validate(false);
+
+    }
+
+    /*
+    * Test HasValidation validate method without building exclusion rules and checking the
+     * validation error bag
+    */
+    public function testValidateMethodExceptionError()
+    {
+
+
+        $author = Author::find(1);
+
+        /*
+          * We expect exception is thrown because the model with id 1
+          * has the code A000001 and it is involved in the unique rule
+          */
+
+        $author->code = ['A00001'];
+
+        try {
+            $author->validate(false);
+
+        } catch (ValidationException $e) {
+
+            $errorsExpected = [
+                'code' => [
+                    'The code has already been taken.',
+                ],
+            ];
+
+            $this->assertEquals($e->errors(), $errorsExpected);
+        }
+
+
+    }
+
 
 
 }

@@ -184,11 +184,9 @@ trait HasValidation
 
         $validator = Validator::make($this->getAttributes(), $validatorSettings['rules'], $validatorSettings['customMessages'], $validatorSettings['customAttributes']);
 
-        if ($validator->passes()) {
-            return $this;
-        }
+        $validator->validate();
 
-        throw new ValidationException($validator);
+        return $this;
 
     }
 
@@ -252,7 +250,6 @@ trait HasValidation
                 }
             }
 
-            $ruleset = implode('|',$ruleset);
         }
 
         return $rules;
