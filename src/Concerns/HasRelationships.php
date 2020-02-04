@@ -14,6 +14,117 @@ use Gecche\Breeze\Relations\Relation;
 use Gecche\Breeze\Relations\BelongsToMany;
 
 
+/*
+ *
+ *
+ *
+
+   RELATION TYPES AND AND ARGUMENTS
+
+    HasOne:
+        'relationName' => [
+            Breeze::$HAS_ONE,
+            'related' => required,
+            'foreignKey' => optional,
+            'localKey' => optional,
+        ]
+
+    HasMany:
+        'relationName' => [
+            Breeze::$HAS_MANY
+            'related' => 'required',
+            'foreignKey' => optional,
+            'localKey' => optional
+        ]
+
+    HasManyThrough:
+        'relationName' => [
+            Breeze::$HAS_MANY_THROUGH
+            'related' => 'required',
+            'through' => 'required',
+            'firstKey' => optional,
+            'secondKey' => optional,
+            'localKey' => optional,
+            'secondLocalKey' => optional
+        ]
+
+    BelongsTo:
+        'relationName' => [
+            Breeze::$BELONGS_TO
+            'related' => 'required',
+            'foreignKey' => optional,
+            'ownerKey' => optional,
+            'relation' => optional
+        ]
+
+    BelongsToMany:
+        'relationName' => [
+            Breeze::$BELONGS_TO_MANY
+            'related' => 'required',
+            'table' => optional,
+            'foreignPivotKey' => optional,
+            'relatedPivotKey' => optional,
+            'parentKey' => optional,
+            'relatedKey' => optional,
+            'relation' => optional
+        ]
+
+    MorphTo:
+        'relationName' => [
+            Breeze::$MORPH_TO
+            'name' => optional,
+            'type' => optional,
+            'id' => optional
+        ]
+
+    MorphOne:
+        'relationName' => [
+            Breeze::$MORPH_ONE
+            'related' => 'required',
+            'name' => 'required',
+            'type' => optional,
+            'id' => optional,
+            'localKey' => optional
+        ]
+
+    MorphMany:
+        'relationName' => [
+            Breeze::$MORPH_MANY
+            'related' => 'required',
+            'name' => 'required',
+            'type' => optional,
+            'id' => optional,
+            'localKey' => optional
+        ]
+
+    MorphToMany:
+        'relationName' => [
+            Breeze::$MORPH_TO_MANY
+            'related' => 'required',
+            'name' => 'required',
+            'table' => optional,
+            'foreignPivotKey' => optional,
+            'relatedPivotKey' => optional,
+            'parentKey' => optional,
+            'relatedKey' => optional,
+            'inverse ' => false
+        ]
+
+    MorphedByMany:
+        'relationName' => [
+            Breeze::$MORPHED_BY_MANY
+            'related' => 'required',
+            'name' => 'required',
+            'table' => optional,
+            'foreignPivotKey' => optional,
+            'relatedPivotKey' => optional,
+            'parentKey' => optional,
+            'relatedKey' => optional
+        ]
+
+
+ */
+
 trait HasRelationships
 {
 
@@ -88,10 +199,10 @@ trait HasRelationships
     /**
      * Instantiate a new HasOne relationship.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @param  string  $foreignKey
-     * @param  string  $localKey
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param string $foreignKey
+     * @param string $localKey
      * @return \Illuminate\Database\Eloquent\Relations\HasOne
      */
     protected function newHasOne(Builder $query, Model $parent, $foreignKey, $localKey)
@@ -100,14 +211,13 @@ trait HasRelationships
     }
 
 
-
     /**
      * Instantiate a new HasMany relationship.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @param  string  $foreignKey
-     * @param  string  $localKey
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param string $foreignKey
+     * @param string $localKey
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */
     protected function newHasMany(Builder $query, Model $parent, $foreignKey, $localKey)
@@ -119,14 +229,14 @@ trait HasRelationships
     /**
      * Instantiate a new BelongsToMany relationship.
      *
-     * @param  \Illuminate\Database\Eloquent\Builder  $query
-     * @param  \Illuminate\Database\Eloquent\Model  $parent
-     * @param  string  $table
-     * @param  string  $foreignPivotKey
-     * @param  string  $relatedPivotKey
-     * @param  string  $parentKey
-     * @param  string  $relatedKey
-     * @param  string  $relationName
+     * @param \Illuminate\Database\Eloquent\Builder $query
+     * @param \Illuminate\Database\Eloquent\Model $parent
+     * @param string $table
+     * @param string $foreignPivotKey
+     * @param string $relatedPivotKey
+     * @param string $parentKey
+     * @param string $relatedKey
+     * @param string $relationName
      * @return \Illuminate\Database\Eloquent\Relations\BelongsToMany
      */
     protected function newBelongsToMany(Builder $query, Model $parent, $table, $foreignPivotKey, $relatedPivotKey,
@@ -134,7 +244,6 @@ trait HasRelationships
     {
         return new BelongsToMany($query, $parent, $table, $foreignPivotKey, $relatedPivotKey, $parentKey, $relatedKey, $relationName);
     }
-
 
 
     /**
@@ -146,13 +255,12 @@ trait HasRelationships
     {
         $morphMap = Relation::morphMap();
 
-        if (! empty($morphMap) && in_array(static::class, $morphMap)) {
+        if (!empty($morphMap) && in_array(static::class, $morphMap)) {
             return array_search(static::class, $morphMap, true);
         }
 
         return static::class;
     }
-
 
 
     public function getPivotKeys($relationName)

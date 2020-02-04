@@ -1,4 +1,4 @@
-<?php namespace Gecche\Breeze\Tests\Models;
+<?php namespace Gecche\Breeze\Tests\ModelsForCompiling;
 
 use Gecche\Breeze\Breeze;
 
@@ -10,9 +10,7 @@ use Gecche\Breeze\Breeze;
  */
 class Author extends Breeze
 {
-    use Relations\AuthorRelations;
-
-    /**
+	/**
      * The table associated with the model.
      *
      * @var string

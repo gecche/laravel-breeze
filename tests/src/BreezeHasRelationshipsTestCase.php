@@ -17,11 +17,19 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 
 class BreezeHasRelationshipsTestCase extends \Orchestra\Testbench\TestCase
 {
+
+
+    protected $modelsNamespace;
+    protected $modelsDir;
+    protected $relationsDir;
+    protected $models = [];
 
     use RefreshDatabase;
 
@@ -32,6 +40,16 @@ class BreezeHasRelationshipsTestCase extends \Orchestra\Testbench\TestCase
      */
     public function setUp()
     {
+
+        $this->modelsDir = __DIR__ . '/Models';
+        $this->relationsDir = $this->modelsDir . '/Relations';
+        $this->modelsNamespace = "Gecche\\Breeze\\Tests\\Models";
+
+        $this->models = [
+            'Book',
+            'Author',
+        ];
+
         parent::setUp();
 
         $this->withFactories(
@@ -124,6 +142,22 @@ class BreezeHasRelationshipsTestCase extends \Orchestra\Testbench\TestCase
             'language' => 'EN',
             'author_id' => 2,
         ]);
+
+        DB::table('books_coauthors')
+            ->insert([
+                'book_id' => 1,
+                'coauthor_id' => 2,
+            ]);
+        DB::table('books_coauthors')
+            ->insert([
+                'book_id' => 1,
+                'coauthor_id' => 3,
+            ]);
+        DB::table('books_coauthors')
+            ->insert([
+                'book_id' => 2,
+                'coauthor_id' => 3,
+            ]);
     }
 
     /**
@@ -147,6 +181,14 @@ class BreezeHasRelationshipsTestCase extends \Orchestra\Testbench\TestCase
                 'model' => User::class,
             ]
         ]);
+
+        $app['config']->set('breeze',
+            [
+                'default-models-dir' => $this->modelsDir,
+                'namespace' => $this->modelsNamespace,
+            ]
+        );
+
     }
 
     /**
@@ -163,25 +205,102 @@ class BreezeHasRelationshipsTestCase extends \Orchestra\Testbench\TestCase
     }
 
 
+
+    public function testBookRelations() {
+
+        $book = Book::find(1);
+        /*
+         * Test if relation "author" has been instantiated properly
+         */
+        $author = $book->author;
+        $expectedAuthorName = 'Dante';
+        $this->assertEquals($expectedAuthorName,$author->name);
+
+
+        /*
+         * Test if relation "coauthors" has been instantiated properly
+         */
+        $coauthorsNames = $book->coauthors->pluck('name')->toArray();
+        $expectedCoauthorsNames = [
+            'Joanne Kathleen',
+            'Stephen',
+        ];
+        $this->assertEquals($expectedCoauthorsNames,$coauthorsNames);
+    }
+
+
+    public function testAuthorRelations() {
+
+
+        $author = Author::where('code','A00002')->first();
+        /*
+         * Test if relation "books" has been instantiated properly
+         */
+        $booksTitles = $author->books->pluck('title')->toArray();
+        $expectedBooksTitles = [
+            'Harry Potter and the Philosopher\'s Stone',
+            'Harry Potter and the Chamber of Secrets',
+            'Harry Potter adn the Prisoner fo Azkaban',
+        ];
+        $this->assertEquals($expectedBooksTitles,$booksTitles);
+
+        /*
+         * Test if relation "coauthored" has been instantiated properly
+         */
+        $coauthoredBooksTitles = $author->coauthored->pluck('title')->toArray();
+        $expectedCoauthoredBooksTitles = [
+            'La divina commedia',
+        ];
+        $this->assertEquals($expectedCoauthoredBooksTitles,$coauthoredBooksTitles);
+
+    }
+
     /*
-     * TEST FOR DOMAIN ADD COMMAND
-     * It checks if the env file and storage dirs exist and if the list of domains in the config file is updated
+     * TEST #2 FOR COMPILE RELATIONS COMMAND
+     * Compile relations for Gecche\Breeze\Tests\Models\Pippo
+     * Check that Relations for class Pippo.php will not be compiled because Pippo is not a Model
      */
-    public function testCompileRelationsCommand() {
+//    public function testCompileRelationsCommandPippo() {
+//
+//        $expectedArtisanOutput = 'Pippo.php not guessed as a model';
+//        $expectedPippoRelationTraitFile = $this->relationsDir . '/PippoRelations.php';
+//
+//        $this->assertDirectoryNotExists($this->relationsDir);
+//
+//
+//        $this->artisan('breeze:relations',['model' => 'Pippo']);
+//
+//        $output = Artisan::output();
+//
+//        $this->assertContains($expectedArtisanOutput,$output);
+//        $this->assertDirectoryExists($this->relationsDir);
+//        $this->assertFileNotExists($expectedPippoRelationTraitFile);
+//    }
 
-        Config::set('breeze',['default-models-dir' => __DIR__ .'/Models','namespace' => "Gecche\\Breeze\\Tests\\Models\\"]);
-        $this->artisan('breeze:relations',['model' => 'Book']);
-        print_r(Artisan::output());
 
-//        $this->assertFileExists(base_path('.env.'.$site));
-//
-//        $this->artisan('config:clear');
-//
-//        $domainListed = Config::get('domain.domains');
-//
-//        $this->assertArrayHasKey($site,$domainListed);
-//
-//        $this->assertDirectoryExists(storage_path(domain_sanitized($site)));
+    protected function removeRelationTraitUse($filename,$modelName) {
+
+        if (!File::exists($filename)) {
+            return;
+        }
+
+        $fileContent = File::get($filename);
+
+        $relationTraitUseString = "use Relations\\".$modelName."Relations;\n";
+
+        $fileContent = str_replace($relationTraitUseString,'',$fileContent);
+
+        File::put($filename,$fileContent);
+
+    }
+
+    protected function cleanRelations() {
+
+        File::deleteDirectory($this->relationsDir);
+        foreach ($this->models as $modelName) {
+            $this->removeRelationTraitUse($this->modelsDir.'/'.$modelName.'.php',$modelName);
+        }
+
     }
 
     /*

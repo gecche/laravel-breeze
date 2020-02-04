@@ -111,7 +111,7 @@ class CompileRelationsCommand extends Command
         $before = substr($modelContents,0,$modelContentsStartingPoint+1);
         $after = substr($modelContents,$modelContentsStartingPoint+1);
         $modelContents = $before .
-            "\n\t".'use Relations'."\\".$traitName.";".
+            "\n\t".'use Relations'."\\".$traitName.";\n".
             $after;
 
         file_put_contents(
@@ -128,7 +128,7 @@ class CompileRelationsCommand extends Command
             (config('breeze.default-models-dir') ?:
                 base_path('app'));
 
-        $this->fullDir = app_path($this->dir);
+        $this->fullDir = $this->dir;
 
         $this->namespace = config('breeze.namespace') ?: $this->getAppNamespace();
 
