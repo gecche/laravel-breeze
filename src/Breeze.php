@@ -20,8 +20,6 @@ abstract class Breeze extends Model implements BreezeInterface {
 
     use HasValidation;
 
-    use HasFormHelpers;
-
     use HasTimestamps;
     use HasOwnerships {
         HasOwnerships::touch insteadof HasTimestamps;
