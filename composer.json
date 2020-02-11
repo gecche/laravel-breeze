@@ -40,7 +40,8 @@
     "extra": {
         "laravel": {
             "providers": [
-
+                "Gecche\\Breeze\\BreezeServiceProvider",
+                "Gecche\\Breeze\\Database\\MigrationServiceProvider"
             ]
         }
     }
