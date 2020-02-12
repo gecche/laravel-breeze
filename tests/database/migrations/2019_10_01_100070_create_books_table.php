@@ -1,7 +1,8 @@
 <?php
 
+use Gecche\Breeze\Facades\Schema;
+use Gecche\Breeze\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
 
 
 /**

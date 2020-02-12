@@ -25,6 +25,7 @@ class Author extends Breeze
      * @var bool
      */
     public $timestamps = true;
+    public $ownerships = true;
 
     public $guarded = ['id'];
 

@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Support\Facades\Schema;
-use Illuminate\Database\Schema\Blueprint;
+use Gecche\Breeze\Facades\Schema;
+use Gecche\Breeze\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
 class CreateUsersTable extends Migration
@@ -20,6 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('password');
             $table->rememberToken();
             $table->timestamps();
+            $table->nullableOwnerships();
         });
     }
 

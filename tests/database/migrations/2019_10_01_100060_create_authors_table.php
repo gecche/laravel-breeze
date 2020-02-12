@@ -1,8 +1,8 @@
 <?php
 
+use Gecche\Breeze\Facades\Schema;
+use Gecche\Breeze\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
-use Illuminate\Database\Schema\Blueprint;
-
 
 /**
  * Class Posts
@@ -25,6 +25,7 @@ class CreateAuthorsTable extends Migration
             $table->string('nation');
             $table->date('birthdate');
             $table->timestamps();
+            $table->ownerships();
         });
     }
 
