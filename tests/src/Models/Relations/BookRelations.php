@@ -14,7 +14,8 @@ trait BookRelations
     public function coauthors() {
 
         return $this->belongsToMany('Gecche\Breeze\Tests\Models\Author', 'books_coauthors', null, 'coauthor_id',
-                                    null, null, null);
+                                    null, null, null)
+                        ->withPivot(['created_at','updated_at','created_by','updated_by']);
     
     }
 

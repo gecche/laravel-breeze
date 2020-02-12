@@ -73,7 +73,7 @@ class BelongsToMany extends \Illuminate\Database\Eloquent\Relations\BelongsToMan
      */
     public function withOwnerships($createdBy = null, $updatedBy = null)
     {
-        $this->withTimestamps = true;
+        $this->withOwnerships = true;
 
         $this->pivotCreatedBy = $createdBy;
         $this->pivotUpdatedBy = $updatedBy;

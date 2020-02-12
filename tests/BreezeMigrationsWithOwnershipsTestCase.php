@@ -132,69 +132,9 @@ class BreezeMigrationsWithOwnershipsTestCase extends \Orchestra\Testbench\TestCa
             'surname' => 'Alighieri',
             'nation' => 'IT',
             'birthdate' => '1265-05-21',
+            'created_by' => null,
+            'updated_by' => null,
         ]);
-
-//
-//        Author::create([
-//            'code' => 'A00002',
-//            'name' => 'Joanne Kathleen',
-//            'surname' => 'Rowling',
-//            'nation' => 'UK',
-//            'birthdate' => '1965-07-31',
-//        ]);
-
-
-
-    }
-
-    /*
-     * Test that migration's ownerhips fields are set in the table and
-     * that they cannot be null
-     *
-     */
-    public function testOwnershipsInAuthorsTableAuthenticatedUser()
-    {
-
-
-        $this->artisan('migrate', ['--database' => 'testbench']);
-
-
-        factory(User::class, 2)->create();
-
-        $author = new Author();
-
-        $this->assertTrue($author->ownerships);
-
-        Auth::loginUsingId(1);
-        //Since we are not authenticated, the created_by and updated_by columns should be set to null causing
-        // a db exception
-        $author = Author::create([
-            'code' => 'A00001',
-            'name' => 'Dante',
-            'surname' => 'Alighieri',
-            'nation' => 'IT',
-            'birthdate' => '1265-05-21',
-        ]);
-
-
-
-        $this->assertEquals($author->created_by,1);
-        $this->assertEquals($author->updated_by,1);
-
-
-        Auth::loginUsingId(2);
-
-
-        $author->name = 'Pippo';
-
-        $author->save();
-
-        $this->assertEquals($author->name,'Pippo');
-        $this->assertEquals($author->created_by,1);
-        $this->assertEquals($author->updated_by,2);
-
-
-
 
 
     }

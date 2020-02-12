@@ -25,7 +25,7 @@ class CreateAuthorsTable extends Migration
             $table->string('nation');
             $table->date('birthdate');
             $table->timestamps();
-            $table->ownerships();
+            $table->nullableOwnerships();
         });
     }
 

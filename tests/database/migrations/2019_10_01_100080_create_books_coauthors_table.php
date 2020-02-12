@@ -22,6 +22,8 @@ class CreateBooksCoauthorsTable extends Migration
             $table->increments('id');
             $table->integer('book_id');
             $table->integer('coauthor_id');
+            $table->nullableOwnerships();
+            $table->timestamps();
         });
     }
 
