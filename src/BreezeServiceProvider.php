@@ -60,9 +60,9 @@ class BreezeServiceProvider extends ServiceProvider
     public function boot()
     {
 
-//        $this->publishes([
-//            __DIR__.'/../config/auth-verification.php' => config_path('auth-verification.php'),
-//        ]);
+        $this->publishes([
+            __DIR__.'/config/breeze.php' => config_path('breeze.php'),
+        ]);
 
         Builder::macro('addUpdatedByColumn', function (array $values) {
 

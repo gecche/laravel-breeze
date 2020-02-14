@@ -10,6 +10,7 @@ use Gecche\Breeze\Breeze;
  */
 class Author extends Breeze
 {
+
 	/**
      * The table associated with the model.
      *
@@ -55,8 +56,11 @@ class Author extends Breeze
 
     public static $relationsData = [
         'books' => [self::HAS_MANY, 'related' => Book::class],
-        'coauthored' => [self::BELONGS_TO_MANY, 'related' => Book::class, 'table' => 'books_coauthors',
+        'coauthored' => [self::BELONGS_TO_MANY,
+            'related' => Book::class,
+            'table' => 'books_coauthors',
             'foreignPivotKey' => 'coauthor_id',
+            'pivotFields' => ['created_at','updated_at'],
         ],
     ];
 

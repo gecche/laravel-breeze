@@ -4,6 +4,7 @@ namespace Gecche\Breeze\Console;
 
 use Gecche\Breeze\Breeze;
 use Illuminate\Support\Str;
+use Illuminate\Support\Arr;
 use Illuminate\Console\Command;
 use Illuminate\Console\DetectsApplicationNamespace;
 
@@ -67,7 +68,7 @@ class CompileRelationsCommand extends Command
                 continue;
             };
 
-            $modelRelativeClassName = array_get($modelData,'modelRelativeClassName');
+            $modelRelativeClassName = Arr::get($modelData,'modelRelativeClassName');
 
             $this->relationErrors = [];
             if (!($traitContents = $this->compileTrait($modelRelations,$modelRelativeClassName,$traitStub))) {
@@ -102,12 +103,12 @@ class CompileRelationsCommand extends Command
     }
 
     protected function writeUseInModel($modelFilename,$modelData,$traitName) {
-        $modelContents = array_get($modelData,'modelContents');
+        $modelContents = Arr::get($modelData,'modelContents');
         if (strstr($modelContents,'use Relations'."\\".$traitName)) {
             return;
         }
 
-        $modelContentsStartingPoint = array_get($modelData, 'modelContentsStartingPoint');
+        $modelContentsStartingPoint = Arr::get($modelData, 'modelContentsStartingPoint');
         $before = substr($modelContents,0,$modelContentsStartingPoint+1);
         $after = substr($modelContents,$modelContentsStartingPoint+1);
         $modelContents = $before .
@@ -197,7 +198,7 @@ class CompileRelationsCommand extends Command
 
     protected function getModelRelations($modelData)
     {
-        $modelClassName = array_get($modelData, 'modelClassName');
+        $modelClassName = Arr::get($modelData, 'modelClassName');
 
         $relationsData = $modelClassName::getRelationsData();
 
@@ -210,7 +211,7 @@ class CompileRelationsCommand extends Command
         $traitContents = [];
 
         foreach ($modelRelations as $name => $relationData) {
-            $relationType = array_get($relationData, 0);
+            $relationType = Arr::get($relationData, 0);
             if (!in_array($relationType, Breeze::getRelationTypes())) {
                 $this->relationErrors[$name] =
                     'Relation type not allowed';
@@ -289,7 +290,8 @@ class CompileRelationsCommand extends Command
                     'relatedPivotKey' => null,
                     'parentKey' => null,
                     'relatedKey' => null,
-                    'relation' => null
+                    'relation' => null,
+                    'pivotFields' => 'nullableArray',
                 ];
 
             case 'MorphTo':
@@ -326,7 +328,8 @@ class CompileRelationsCommand extends Command
                     'relatedPivotKey' => null,
                     'parentKey' => null,
                     'relatedKey' => null,
-                    'inverse ' => false
+                    'inverse ' => false,
+                    'pivotFields' => 'nullableArray',
                 ];
 
             case 'MorphedByMany':
@@ -337,7 +340,8 @@ class CompileRelationsCommand extends Command
                     'foreignPivotKey' => null,
                     'relatedPivotKey' => null,
                     'parentKey' => null,
-                    'relatedKey' => null
+                    'relatedKey' => null,
+                    'pivotFields' => 'nullableArray',
                 ];
 
             default:
@@ -391,10 +395,19 @@ class CompileRelationsCommand extends Command
     {
         foreach ($relationDataFormat as $key => $requiredOrNullable) {
 
-            if ($requiredOrNullable == 'required' && !($data = array_get($relationData, $key))) {
+            if ($requiredOrNullable == 'required' && !($data = Arr::get($relationData, $key))) {
                 $this->relationErrors[$relationName] =
                     'Relation ' . $relationName . ' not compiled: missing required parameter ' . $key;
                 return false;
+            }
+
+            if ($requiredOrNullable == 'nullableArray' && array_key_exists($key,$relationData)) {
+                $data = Arr::get($relationData, $key);
+                if (!is_array($data)) {
+                    $this->relationErrors[$relationName] =
+                        'Relation ' . $relationName . ' not compiled: parameter ' . $key . ', if present, must be an array';
+                    return false;
+                }
             }
 
             if (is_null($requiredOrNullable) && !array_key_exists($key,$relationData)) {
@@ -419,6 +432,19 @@ class CompileRelationsCommand extends Command
             str_replace('{{relationName}}', $name, $stub);
 
         foreach ($relationData as $dataKey => $dataValue) {
+
+            if ($dataKey === 'pivotFields') {
+                if (empty($dataValue)) {
+                    continue;
+                }
+
+                $pivotFields = "['".implode("','",$dataValue)."']";
+
+                $withPivotMethod = ")\n\t\t\t\t\t\t\t->withPivot(".$pivotFields.");";
+                $stub = str_replace(');', $withPivotMethod, $stub);
+                continue;
+            }
+
             if (is_bool($dataValue)) {
                 $stub =
                     str_replace('{{'.$dataKey.'}}', $dataValue ? "true" : "false", $stub);
