@@ -48,6 +48,7 @@ class BreezeHasValidationTestCase extends \Orchestra\Testbench\TestCase
 
         factory(User::class, 10)->create();
 
+        Auth::loginUsingId(1);
         Author::create([
             'code' => 'A00001',
             'name' => 'Dante',

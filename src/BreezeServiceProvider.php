@@ -5,6 +5,8 @@ namespace Gecche\Breeze;
 use Gecche\Breeze\Console\CompileRelationsCommand;
 use Gecche\Breeze\Database\Console\Migrations\MigrateMakeCommand;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder as DBBuilder;
+
 use Illuminate\Support\Arr;
 use Illuminate\Support\ServiceProvider;
 

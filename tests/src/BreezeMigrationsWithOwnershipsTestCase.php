@@ -36,9 +36,6 @@ class BreezeMigrationsWithOwnershipsTestCase extends \Orchestra\Testbench\TestCa
         $this->withFactories(
             __DIR__ . '/../database/factories'
         );
-//        app()->bind(AuthServiceProvider::class, function($app) { // not a service provider but the target of service provider
-//            return new \Gecche\Breeze\Tests\AuthServiceProvider($app);
-//        });
 
         $this->beforeApplicationDestroyed(function () {
             $this->artisan('migrate:rollback');

@@ -60,7 +60,7 @@ class Author extends Breeze
             'related' => Book::class,
             'table' => 'books_coauthors',
             'foreignPivotKey' => 'coauthor_id',
-            'pivotFields' => ['created_at','updated_at','created_by','updated_by'],
+            'pivotFields' => ['created_at','updated_at','created_by','updated_by','percentage'],
         ],
     ];
 
