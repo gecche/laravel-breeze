@@ -2,12 +2,6 @@
 
 use Gecche\Breeze\Breeze;
 
-/**
- * Class Code
- *
- * @package Gecche\AclTest\Tests\Models
- *
- */
 class Author extends Breeze
 {
     use Relations\AuthorRelations;

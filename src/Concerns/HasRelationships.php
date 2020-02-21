@@ -66,7 +66,8 @@ use Gecche\Breeze\Relations\BelongsToMany;
             'relatedPivotKey' => optional,
             'parentKey' => optional,
             'relatedKey' => optional,
-            'relation' => optional
+            'relation' => optional,
+            'pivotFields' => 'nullableArray'
         ]
 
     MorphTo:
@@ -107,7 +108,8 @@ use Gecche\Breeze\Relations\BelongsToMany;
             'relatedPivotKey' => optional,
             'parentKey' => optional,
             'relatedKey' => optional,
-            'inverse ' => false
+            'inverse ' => false,
+            'pivotFields' => 'nullableArray'
         ]
 
     MorphedByMany:
@@ -119,7 +121,8 @@ use Gecche\Breeze\Relations\BelongsToMany;
             'foreignPivotKey' => optional,
             'relatedPivotKey' => optional,
             'parentKey' => optional,
-            'relatedKey' => optional
+            'relatedKey' => optional,
+            'pivotFields' => 'nullableArray'
         ]
 
 
