@@ -289,132 +289,82 @@ the relations for each guessed model file. To compile only a certain model, an o
 
 If a relation trait is already present in the subfolder, relations are not compiled unless the `--force` option is used.
 
+### Ownerships usage
 
+The ownerships trait allows for a Breeze model to use "ownerships fields" in the same way as standard 
+timestamps fields in Eloquent models.
+
+The Breeze model has a new public `ownerships` property which can be turned on:
+   
+```
+class Author extends Breeze
+{
+
+    protected $table = 'authors';
+
+    public $ownerships = true;
+
+...
+```
+
+By default the Breeze model expects that the associated table contains two ownerships fields, namely 
+ `created_by` and `updated_by` keeping track of the currently authenticated user which has created the model 
+ and the last one which has updated the model. 
  
+The packages handles the automaitc update of the ownerships fields in the same way as timestamps 
+are managed by stanrd Eloquent models.
 
-#### `config:cache` artisan command
-The config:cache artisan command can be used with this package in the same way as any other 
-artisan command. 
+#### Migrations for ownerships
 
-Note that this command will generate a file config.php file for each domain under which the command has been executed.
-I.e. the command
- ```
- php artisan config:cache --domain=site2.com 
- ```
-will generate the file
- ```
- config-site2_com.php 
- ```
-
-### Further information
-At run-time, the current HTTP domain is maintained in the laravel container 
-and can be accessed by its `domain()` method added by this package.
-
-A `domainList()` method is available. It returns an associative array 
-containing the installed domains info, similar to the `domain.list` command above.
-
-E.g.
- ```
- [ 
-    site1.com => [
-        'storage_path' => <LARAVEL-STORAGE-PATH>/site1_com,
-        'env' => '.env.site1.com'
-    ]
- ] 
- ```
-
-#### Distinguishing between HTTP domains in web pages
-
-For each HTTP request received by the application, the specific environment file is 
-loaded and the specific storage folder is used.
+The Breeze package overrides the standard `migrate:make` command by adding the availability of the 
+`ownerships` and `nullableOwnerships` methods which by default add to a table the `created_by` and `updated_by` 
+fields with an integer type either not nulalble or nullable respectively.
  
-If no specific environment file and/or storage folder is found, the standard one is used.
-
-The detection of the right HTTP domain is done by using the `$_SERVER['SERVER_NAME']` 
-PHP variable. 
- 
-#### Using multi domains in artisan commands
- 
- In order to distinguishing between domains, each artisan command accepts a new option: `domain`. E.g.:
- ```
- php artisan list --domain=site1.com 
- ```
-The command will use the corresponding domain settings.
-
-#### About queues
- 
- The artisan commands `queue:work` and `queue:listen` commands have been updated
- to accept a new `domain` option.
- ```
- php artisan queue:work --domain=site1.com 
- ```
-As usual, the above command will use the corresponding domain settings.
-
-Keep in mind that if, for example, you are using the `database` driver and you have two domains sharing the same db,
-you should use two distinct queues if you want to manage the jobs of each domain separately.
-
-For example, you could: 
-- put in your .env files a default queue for each domain, e.g. 
-`QUEUE_DEFAULT=default1` for site1.com and `QUEUE_DEFAULT=default2` for site2.com
-- update the `queue.php` config file by changing the default queue accordingly: 
-```
-'database' => [
-    'driver' => 'database',
-    'table' => 'jobs',
-    'queue' => env('QUEUE_DEFAULT','default'),
-    'retry_after' => 90,
-],
-```
-        
-- launch two distinct workers 
-```
- php artisan queue:work --domain=site1.com --queue=default1
- ```
- and
-```
- php artisan queue:work --domain=site1.com --queue=default2
- ```
-
-Obviously, the same can be done for each other queue driver, apart from the `sync` driver.
-
-#### `storage:link` command
- 
-If you make use of the `storage:link` command and you want a distinct symbolic link for each domain, you have to create 
-them manually because to date such command always creates a link named `storage` and that name is hard coded in the 
-command. Extending the `storage:link` command allowing to choose the name is outside the scope of this package 
-(and I hope it will be done directly in future versions of Laravel).
-
-A way to obtain multiple storage links could be the following.
-LEt us suppose to have two domains, namely `site1.com` and `site2.com` with associated storage folders 
-`storage/site1_com` and `storage/site2_com`.
-
-1. We manually create links for each domain: 
+For example:
 
 ```
-ln -s storage/site1_com/app/public public/storage-site1_com 
-ln -s storage/site2_com/app/public public/storage-site2_com 
+<?php
+
+use Gecche\Breeze\Facades\Schema;
+use Gecche\Breeze\Database\Schema\Blueprint;
+use Illuminate\Database\Migrations\Migration;
+
+/**
+ * Class Posts
+ */
+class CreateAuthorsTable extends Migration
+{
+
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
+    public function up()
+    {
+        Schema::create('authors', function (Blueprint $table) {
+            $table->increments('id');
+
+            ...
+            
+            $table->timestamps();
+            
+            $table->ownerships();
+        });
+    }
+    
+    ...
+
+
+}
 ```
 
-2. In `.env.site1.com` and `.env.site2.com` we add an entry, e.g., for the first domain: 
+Please note that  if you don't use the artisan command, you can use the ownerships methods in a migration, 
+by replacing the standard Schema classes:
 
 ```
-APP_PUBLIC_STORAGE=-site1_com
+use Gecche\Breeze\Facades\Schema;
+use Gecche\Breeze\Database\Schema\Blueprint;
 ```
-
-3. In the `filesystems.php` config file we change as follows:
-
-```
-'public' => [
-    'driver' => 'local',
-    'root' => storage_path('app/public'),
-    'url' => env('APP_URL').'/storage'.env('APP_PUBLIC_STORAGE'),
-    'visibility' => 'public',
-],
-```
-
-Furthermore, if you are using the package in a Single Page Application (SPA) setting, you could better handling distinct 
-public resources for each domain via .htaccess or similar solutions as pointed out by [Scaenicus](https://github.com/Scaenicus) in his 
-[.htacess solution](https://github.com/gecche/laravel-multidomain/issues/11#issuecomment-559822284).
-
 
 
