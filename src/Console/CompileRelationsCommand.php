@@ -3,11 +3,25 @@
 namespace Gecche\Breeze\Console;
 
 use Gecche\Breeze\Breeze;
+use Illuminate\Support\Facades\Config;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Console\Command;
 use Illuminate\Console\DetectsApplicationNamespace;
 
+/**
+ * Class CompileRelationsCommand
+ * @package Gecche\Breeze
+ *
+ * This command compiles the relations of Breeze models defined in their relational array.
+ *
+ * For each model encountered, it creates a correspondent relational trait in a "relations" subfolder and adds the
+ * use of that trait to the Breeze model class.
+ *
+ * The relational trait contains all the relational methods with the standard Eloquent signature.
+ *
+ */
 class CompileRelationsCommand extends Command
 {
 
@@ -19,7 +33,7 @@ class CompileRelationsCommand extends Command
      * @var string
      */
     protected $signature = 'breeze:relations
-                    {model? : Only compile relations for the specified model}
+                    {model? : Only compile relations for the specified model and not for all the models in the folder}
                     {--dir= : Directory of the models}
                     {--force : Overwrite existing relation traits by default}';
 
@@ -31,10 +45,22 @@ class CompileRelationsCommand extends Command
     protected $description = 'Create a relation trait for each model by using the relational array.';
 
 
-    protected $dir;
-    protected $fullDir;
-    protected $namespace;
+    /**
+     * @var
+     */
+    protected $modelsFolder;
+
+    /**
+     * @var
+     */
+    protected $modelsNamespace;
+    /**
+     * @var array
+     */
     protected $models = [];
+    /**
+     * @var array
+     */
     protected $relationErrors = [];
 
 
@@ -46,38 +72,55 @@ class CompileRelationsCommand extends Command
     public function handle()
     {
 
-        $this->getFilesData();
+        /*
+         * We set the folder, the namespace of the models and the models for compiling relations
+         */
+        $this->prepareData();
 
-        $this->createDirectories();
+        /*
+         * We create the relational traits folder if it does not exist
+         */
+        $this->createTraitsFolder();
 
+        /*
+         * We check for the package's relations stub.
+         */
         if (!($traitStub = $this->getStub('RelationsTrait'))) {
             $this->info('RelationTraits stub not found');
             return;
         };
 
 
+        /*
+         * For each model encountered we compile the relations defined in the Breeze relational array
+         */
         foreach ($this->models as $modelFilename) {
+
+
+            /*
+             * We try to guess if the current model file is indeed a Breeze model file
+             */
             if (($modelData = $this->checkAndGuessModelFile($modelFilename)) === false) {
                 $this->info('File ' . $modelFilename . ' not guessed as a model');
                 continue;
             }
 
+            $modelName = Arr::get($modelData,'modelName');
 
-            if (!($modelRelations = $this->getModelRelations($modelData))) {
+            if (!($modelRelations = $this->getModelRelations($modelName))) {
                 $this->info('Empty or not suitable relational array in file ' . $modelFilename);
                 continue;
             };
 
-            $modelRelativeClassName = Arr::get($modelData,'modelRelativeClassName');
 
             $this->relationErrors = [];
-            if (!($traitContents = $this->compileTrait($modelRelations,$modelRelativeClassName,$traitStub))) {
+            if (!($traitContents = $this->compileTrait($modelRelations,$modelName,$traitStub))) {
                 $this->info('Empty or not suitable relational array in file ' . $modelFilename);
                 continue;
             };
 
-            $traitName = $modelRelativeClassName . 'Relations';
-            $traitFileName = $this->fullDir . '/Relations/' . $traitName . '.php';
+            $traitName = $modelName . 'Relations';
+            $traitFileName = $this->modelsFolder . '/Relations/' . $traitName . '.php';
 
             if (file_exists($traitFileName) && ! $this->option('force')) {
                 if (! $this->confirm("The [{$traitName}] trait already exists. Do you want to replace it?")) {
@@ -93,7 +136,7 @@ class CompileRelationsCommand extends Command
             $this->writeUseInModel($modelFilename,$modelData,$traitName);
 
 
-            $this->info('Relation Trait for model '.$modelRelativeClassName.' generated successfully.');
+            $this->info('Relation Trait for model '.$modelName.' generated successfully.');
             foreach ($this->relationErrors as $relationName => $relationError) {
                 $this->info($relationError);
             }
@@ -102,7 +145,12 @@ class CompileRelationsCommand extends Command
 
     }
 
-    protected function writeUseInModel($modelFilename,$modelData,$traitName) {
+    /**
+     * @param $modelFilename
+     * @param $modelData
+     * @param $traitName
+     */
+    protected function writeUseInModel($modelFilename, $modelData, $traitName) {
         $modelContents = Arr::get($modelData,'modelContents');
         if (strstr($modelContents,'use Relations'."\\".$traitName)) {
             return;
@@ -122,44 +170,69 @@ class CompileRelationsCommand extends Command
 
     }
 
-    protected function getFilesData()
+    /**
+     *
+     */
+    protected function prepareData()
     {
 
-        $this->dir = $this->option('dir') ?:
-            (config('breeze.default-models-dir') ?:
-                base_path('app'));
 
-        $this->fullDir = $this->dir;
+        $this->modelsFolder = $this->option('dir') ?:
+            (Config::get('breeze.default-models-dir') ?:
+                app_path());
 
-        $this->namespace = config('breeze.namespace') ?: $this->getAppNamespace();
+        $this->modelsNamespace = Config::get('breeze.namespace') ?: $this->getAppNamespace();
 
+
+        /*
+         * Here we get the models files: if the 'model' option is set, we get only that model, otherwise we
+         * get all the models in modelsFolder
+         */
         $modelName = $this->argument('model');
-
         $this->models = $modelName ? [$this->getModelFilename($modelName)]
-            : glob($this->fullDir . '/*.php');
+            : glob($this->modelsFolder . '/*.php');
 
 
     }
 
 
+    /**
+     * @param $modelName
+     * @return string
+     */
     protected function getModelFilename($modelName)
     {
-        return $this->fullDir . '/' . $modelName . '.php';
+        return $this->modelsFolder . '/' . $modelName . '.php';
     }
 
+    /**
+     * @param $modelFilename
+     * @return array|bool
+     */
     protected function checkAndGuessModelFile($modelFilename)
     {
 
 
-        if (!file_exists($modelFilename)) {
+        if (!File::exists($modelFilename)) {
             return false;
         }
 
-        $modelRelativeName = $this->guessModelNameFromFilename($modelFilename);
-        $modelContents = file_get_contents($modelFilename);
+        $modelName = File::name($modelFilename);
 
-        if (!str_contains($modelContents, 'namespace ' . $this->namespace)
-            || !str_contains($modelContents, 'class ' . $modelRelativeName . ' extends Breeze')
+        $modelContents = File::get($modelFilename);
+
+        $modelClassName = $this->modelsNamespace . '\\' . $modelName;
+
+        $reflectionObject = new \ReflectionClass($modelClassName);
+        /*
+         * We guess if the the file is suitable for compiling relations.
+         * We try to check if
+         *  - the namespace is right
+         *  - the class has the 'getRelationsData' method
+         */
+        if (!str_contains($modelContents, 'namespace ' . $this->modelsNamespace)
+            || (!str_contains($modelContents, 'class ' . $modelName . ' extends Breeze')
+                    && !str_contains($modelContents, 'use HasRelationships'))
             || ($classContentsStart = strpos($modelContents, '{')) === false
         ) {
             return false;
@@ -167,38 +240,34 @@ class CompileRelationsCommand extends Command
 
         return [
             'modelContents' => $modelContents,
-            'modelRelativeClassName' => $modelRelativeName,
-            'modelClassName' => $this->namespace . '\\' . $modelRelativeName,
+            'modelName' => $modelName,
             'modelContentsStartingPoint' => $classContentsStart,
         ];
 
 
     }
 
-    protected function guessModelNameFromFilename($filename)
-    {
-
-        $rightPart = substr($filename, strrpos($filename, '/') + 1);
-        return substr($rightPart, 0, -4);
-    }
-
     /**
-     * Create the directories for the files.
+     * Create the folder for the relational traits files if it does not exists.
      *
      * @return void
      */
-    protected function createDirectories()
+    protected function createTraitsFolder()
     {
 
-        if (!is_dir($directory = ($this->fullDir . '/Relations'))) {
+        if (!is_dir($directory = ($this->modelsFolder . '/Relations'))) {
             mkdir($directory, 0755, true);
         }
     }
 
 
-    protected function getModelRelations($modelData)
+    /**
+     * @param $modelData
+     * @return array|bool
+     */
+    protected function getModelRelations($modelName)
     {
-        $modelClassName = Arr::get($modelData, 'modelClassName');
+        $modelClassName = $this->modelsNamespace . '\\' . $modelName;
 
         $relationsData = $modelClassName::getRelationsData();
 
@@ -206,7 +275,13 @@ class CompileRelationsCommand extends Command
 
     }
 
-    protected function compileTrait($modelRelations,$modelClassName,$traitStub)
+    /**
+     * @param $modelRelations
+     * @param $modelClassName
+     * @param $traitStub
+     * @return bool|mixed
+     */
+    protected function compileTrait($modelRelations, $modelClassName, $traitStub)
     {
         $traitContents = [];
 
@@ -233,7 +308,7 @@ class CompileRelationsCommand extends Command
             return false;
         }
 
-        $traitStub = str_replace('{{modelsnamespace}}',$this->namespace,$traitStub);
+        $traitStub = str_replace('{{modelsnamespace}}',$this->modelsNamespace,$traitStub);
         $traitStub = str_replace('{{ModelName}}',$modelClassName,$traitStub);
 
         $traitRelations = '';
@@ -246,6 +321,10 @@ class CompileRelationsCommand extends Command
     }
 
 
+    /**
+     * @param $type
+     * @return array|bool
+     */
     protected function getRelationDataToCheck($type)
     {
         switch ($type) {
@@ -350,6 +429,12 @@ class CompileRelationsCommand extends Command
         }
     }
 
+    /**
+     * @param $type
+     * @param $name
+     * @param $relationData
+     * @return bool|false|mixed|string
+     */
     protected function compileRelation($type, $name, $relationData)
     {
         if (!($relationContents = $this->getStub($type, $name, true))) {
@@ -370,10 +455,15 @@ class CompileRelationsCommand extends Command
      */
     public function stubPath()
     {
-        return config('breeze.stub-relations-path') ?: __DIR__ . '/stubs';
+        return Config::get('breeze.stub-relations-path') ?: __DIR__ . '/stubs';
     }
 
 
+    /**
+     * @param $stubName
+     * @param bool $relationName
+     * @return bool|false|string
+     */
     protected function getStub($stubName, $relationName = false)
     {
         $stubDir = $relationName ? $this->stubPath().'/Relations' : $this->stubPath();
@@ -391,6 +481,12 @@ class CompileRelationsCommand extends Command
     }
 
 
+    /**
+     * @param $relationDataFormat
+     * @param $relationData
+     * @param $relationName
+     * @return bool
+     */
     protected function checkAndGetRelationDataArray($relationDataFormat, $relationData, $relationName)
     {
         foreach ($relationDataFormat as $key => $requiredOrNullable) {
@@ -424,6 +520,12 @@ class CompileRelationsCommand extends Command
     }
 
 
+    /**
+     * @param $stub
+     * @param $name
+     * @param $relationData
+     * @return bool|mixed
+     */
     protected function compileRelationStub($stub, $name, $relationData)
     {
 

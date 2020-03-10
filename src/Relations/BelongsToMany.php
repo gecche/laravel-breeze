@@ -9,12 +9,6 @@ class BelongsToMany extends \Illuminate\Database\Eloquent\Relations\BelongsToMan
 {
 
     use InteractsWithPivotTableOwnerships;
-//    {
-//        InteractsWithPivotTableOwnerships::updateExistingPivot insteadof InteractsWithPivotTable;
-//        InteractsWithPivotTableOwnerships::formatAttachRecords insteadof InteractsWithPivotTable;
-//        InteractsWithPivotTableOwnerships::formatAttachRecord insteadof InteractsWithPivotTable;
-//        InteractsWithPivotTableOwnerships::baseAttachRecord insteadof InteractsWithPivotTable;
-//    }
 
     /**
      * Indicates if ownerships are available on the pivot table.
@@ -24,14 +18,14 @@ class BelongsToMany extends \Illuminate\Database\Eloquent\Relations\BelongsToMan
     public $withOwnerships = false;
 
     /**
-     * The custom pivot table column for the created_at timestamp.
+     * The custom pivot table column for the created_by timestamp.
      *
      * @var string
      */
     protected $pivotCreatedBy;
 
     /**
-     * The custom pivot table column for the updated_at timestamp.
+     * The custom pivot table column for the updated_by timestamp.
      *
      * @var string
      */
@@ -65,7 +59,7 @@ class BelongsToMany extends \Illuminate\Database\Eloquent\Relations\BelongsToMan
 
 
     /**
-     * Specify that the pivot table has creation and update timestamps.
+     * Specify that the pivot table has creation and update ownerships.
      *
      * @param  mixed  $createdBy
      * @param  mixed  $updatedBy

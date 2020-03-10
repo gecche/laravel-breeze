@@ -36,7 +36,7 @@ abstract class Relation extends \Illuminate\Database\Eloquent\Relations\Relation
     }
 
     /**
-     * Get the name of the "created at" column.
+     * Get the name of the "created by" column.
      *
      * @return string
      */
@@ -46,7 +46,7 @@ abstract class Relation extends \Illuminate\Database\Eloquent\Relations\Relation
     }
 
     /**
-     * Get the name of the "updated at" column.
+     * Get the name of the "updated by" column.
      *
      * @return string
      */
@@ -56,7 +56,7 @@ abstract class Relation extends \Illuminate\Database\Eloquent\Relations\Relation
     }
 
     /**
-     * Get the name of the related model's "updated at" column.
+     * Get the name of the related model's "updated by" column.
      *
      * @return string
      */

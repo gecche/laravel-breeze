@@ -12,9 +12,13 @@ use Illuminate\Database\Eloquent\Concerns\HasRelationships;
 
 
 /**
- * Breeze - Eloquent model base class with some pluses!
+ * Breeze - Eloquent model base class with three new useful traits, namely:
  *
+ * - HasValidation for validating models
+ * - HasOwnerships for keeping track of the user who either creates or (last) updates the model
+ * - HasRelationships for defining relations in a cleaner way by using an array
  */
+
 abstract class Breeze extends Model implements BreezeInterface {
 
 

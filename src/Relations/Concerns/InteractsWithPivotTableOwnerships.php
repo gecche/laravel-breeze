@@ -117,7 +117,7 @@ trait InteractsWithPivotTableOwnerships
     }
 
     /**
-     * Set the creation and update timestamps on an attach record.
+     * Set the creation and update ownerships on an attach record.
      *
      * @param  array  $record
      * @param  bool   $exists

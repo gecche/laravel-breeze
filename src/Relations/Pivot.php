@@ -50,7 +50,7 @@ class Pivot extends \Illuminate\Database\Eloquent\Relations\Pivot
 
 
     /**
-     * Determine if the pivot model has timestamp attributes.
+     * Determine if the pivot model has ownerships attributes.
      *
      * @return bool
      */
@@ -60,7 +60,7 @@ class Pivot extends \Illuminate\Database\Eloquent\Relations\Pivot
     }
 
     /**
-     * Get the name of the "created at" column.
+     * Get the name of the "created by" column.
      *
      * @return string
      */
@@ -70,7 +70,7 @@ class Pivot extends \Illuminate\Database\Eloquent\Relations\Pivot
     }
 
     /**
-     * Get the name of the "updated at" column.
+     * Get the name of the "updated by" column.
      *
      * @return string
      */

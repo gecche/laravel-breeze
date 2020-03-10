@@ -2,9 +2,14 @@
 
 return [
 
-    'namespace' => "\\App\\Models",
+    /*
+     * namespace of the models for compiling relations
+     */
+    'namespace' => "\\App",
 
-    'default-models-dir' => app_path('Models'),
-
+    /*
+     * the default folder where the package looks for models to compile relations
+     */
+    'default-models-dir' => app_path(),
 
 ];

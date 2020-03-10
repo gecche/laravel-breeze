@@ -43,14 +43,14 @@ interface BreezeInterface {
     const MORPHED_BY_MANY = 'morphedByMany';
 
     /**
-     * The name of the "created at" column.
+     * The name of the "created by" ownerships column.
      *
      * @var string
      */
     const CREATED_BY = 'created_by';
 
     /**
-     * The name of the "updated at" column.
+     * The name of the "updated by" ownerships column.
      *
      * @var string
      */
