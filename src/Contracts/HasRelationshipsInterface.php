@@ -34,6 +34,7 @@ interface  HasRelationshipsInterface {
 
     const MORPHED_BY_MANY = 'morphedByMany';
 
+    const HAS_ONE_THROUGH = 'hasOneThrough';
 
 
     /**
