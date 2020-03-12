@@ -37,7 +37,7 @@ class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
         // Next, we will fire any hooks that are supposed to fire after a migration is
         // created. Once that is done we'll be ready to return the full path to the
         // migration file so it can be used however it's needed by the developer.
-        $this->firePostCreateHooks();
+        $this->firePostCreateHooks($table);
 
         return $path;
     }
