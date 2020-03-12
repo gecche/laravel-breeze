@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Arr;
 use Illuminate\Console\Command;
-use Illuminate\Console\DetectsApplicationNamespace;
 
 /**
  * Class CompileRelationsCommand
@@ -23,8 +22,6 @@ use Illuminate\Console\DetectsApplicationNamespace;
  */
 class CompileRelationsCommand extends Command
 {
-
-    use DetectsApplicationNamespace;
 
     /**
      * The name and signature of the console command.
@@ -180,7 +177,7 @@ class CompileRelationsCommand extends Command
             (Config::get('breeze.default-models-dir') ?:
                 app_path());
 
-        $this->modelsNamespace = Config::get('breeze.namespace') ?: $this->getAppNamespace();
+        $this->modelsNamespace = Config::get('breeze.namespace') ?: "\\App";
 
 
         /*
