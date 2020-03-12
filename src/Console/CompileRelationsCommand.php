@@ -2,12 +2,9 @@
 
 namespace Gecche\Breeze\Console;
 
-use Gecche\Breeze\Breeze;
-use Gecche\Breeze\BreezeInterface;
 use Gecche\Breeze\Contracts\HasRelationshipsInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
-use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
 use Illuminate\Console\Command;
 use Illuminate\Console\DetectsApplicationNamespace;
@@ -109,17 +106,17 @@ class CompileRelationsCommand extends Command
 
             $modelName = Arr::get($modelData,'modelName');
 
-            if (!($modelRelations = $this->getModelRelations($modelName))) {
-                $this->info('Empty or not suitable relational array in file ' . $modelFilename);
-                continue;
-            };
 
-
+            /*
+             * Here we build the contents of the relational trait
+             */
             $this->relationErrors = [];
-            if (!($traitContents = $this->compileTrait($modelRelations,$modelName,$traitStub))) {
+            if (!($traitContents = $this->compileTrait($modelData['modelRelations'],$modelName,$traitStub))) {
                 $this->info('Empty or not suitable relational array in file ' . $modelFilename);
                 continue;
             };
+
+
 
             $traitName = $modelName . 'Relations';
             $traitFileName = $this->modelsFolder . '/Relations/' . $traitName . '.php';
@@ -233,32 +230,37 @@ class CompileRelationsCommand extends Command
 
 
 
-        if (!$reflectionObject->implementsInterface(HasRelationshipsInterface::class)) {
+        if (!$reflectionObject->implementsInterface(HasRelationshipsInterface::class) ||
+            $reflectionObject->getNamespaceName() != $this->modelsNamespace
+        ) {
             return false;
         }
-
-
 
 
 
         /*
-         * We guess if the the file is suitable for compiling relations.
-         * We try to check if
-         *  - the namespace is right
-         *  - the class has the 'getRelationsData' method
+         * We guess the starting position of the class code by looking for the first "{".
+         * We will use this point to add the line with the use of the relational trait.
+         *
          */
-        if (!str_contains($modelContents, 'namespace ' . $this->modelsNamespace)
-            || (!str_contains($modelContents, 'class ' . $modelName . ' extends Breeze')
-                    && !str_contains($modelContents, 'use HasRelationships'))
-            || ($classContentsStart = strpos($modelContents, '{')) === false
+        if (($classContentsStart = strpos($modelContents, '{')) === false
         ) {
             return false;
         }
+
+
+        /*
+         * Finally we get the model relational array
+         */
+
+        $modelRelations = $modelClassName::getRelationsData();
+
 
         return [
             'modelContents' => $modelContents,
             'modelName' => $modelName,
             'modelContentsStartingPoint' => $classContentsStart,
+            'modelRelations' => $modelRelations,
         ];
 
 
@@ -279,20 +281,6 @@ class CompileRelationsCommand extends Command
 
 
     /**
-     * @param $modelData
-     * @return array|bool
-     */
-    protected function getModelRelations($modelName)
-    {
-        $modelClassName = $this->modelsNamespace . '\\' . $modelName;
-
-        $relationsData = $modelClassName::getRelationsData();
-
-        return is_array($relationsData) ? $relationsData : false;
-
-    }
-
-    /**
      * @param $modelRelations
      * @param $modelClassName
      * @param $traitStub
@@ -302,14 +290,23 @@ class CompileRelationsCommand extends Command
     {
         $traitContents = [];
 
+        /*
+         * We iterate on the relations to build the trait contents
+         */
         foreach ($modelRelations as $name => $relationData) {
+            /*
+             * We get the relation type checking if it is allowed
+             */
             $relationType = Arr::get($relationData, 0);
-            if (!in_array($relationType, Breeze::getRelationTypes())) {
+            if (!in_array($relationType, $modelClassName::getRelationTypes())) {
                 $this->relationErrors[$name] =
                     'Relation type not allowed';
                 continue;
             }
 
+            /*
+             * We compile the trait contents for that relation and we add to the others
+             */
             $relationType = ucfirst($relationType);
             $relationContent = $this->compileRelation($relationType,$name, $relationData);
 
@@ -325,6 +322,9 @@ class CompileRelationsCommand extends Command
             return false;
         }
 
+        /*
+         * We replace the relation trait stub with the suitable data
+         */
         $traitStub = str_replace('{{modelsnamespace}}',$this->modelsNamespace,$traitStub);
         $traitStub = str_replace('{{ModelName}}',$modelClassName,$traitStub);
 
@@ -339,6 +339,43 @@ class CompileRelationsCommand extends Command
 
 
     /**
+     * @param $type
+     * @param $name
+     * @param $relationData
+     * @return bool|false|mixed|string
+     */
+    protected function compileRelation($type, $name, $relationData)
+    {
+        /*
+         * We get the stub for the relation type provided
+         */
+        if (!($relationContents = $this->getStub($type, $name, true))) {
+            return false;
+        };
+
+        /*
+         * We get the set of checks we have to perform on the relation data provided
+         */
+        $dataToCheck = $this->getRelationDataToCheck($type);
+
+        /*
+         * We perform the checks and we get the concrete relation data
+         */
+        $relationData = $this->checkAndGetRelationDataArray($dataToCheck, $relationData, $name);
+
+        /*
+         * We fnally compile the relation method stub
+         */
+        $relationContents = $this->compileRelationStub($relationContents, $name, $relationData);
+        return $relationContents;
+    }
+
+
+    /**
+     *
+     * For each relation type, some arguments are required, some are optional and so on.
+     * This methos returns the set of checks to perform on the relation data.
+     *
      * @param $type
      * @return array|bool
      */
@@ -446,24 +483,6 @@ class CompileRelationsCommand extends Command
         }
     }
 
-    /**
-     * @param $type
-     * @param $name
-     * @param $relationData
-     * @return bool|false|mixed|string
-     */
-    protected function compileRelation($type, $name, $relationData)
-    {
-        if (!($relationContents = $this->getStub($type, $name, true))) {
-            return false;
-        };
-
-        $dataToCheck = $this->getRelationDataToCheck($type);
-        $relationData = $this->checkAndGetRelationDataArray($dataToCheck, $relationData, $name);
-        $relationContents = $this->compileRelationStub($relationContents, $name, $relationData);
-        return $relationContents;
-    }
-
 
     /**
      * Get the path to the stubs.
@@ -499,6 +518,9 @@ class CompileRelationsCommand extends Command
 
 
     /**
+     *
+     * Performs check on the provided relation data
+     *
      * @param $relationDataFormat
      * @param $relationData
      * @param $relationName
@@ -538,6 +560,9 @@ class CompileRelationsCommand extends Command
 
 
     /**
+     *
+     * compile the relation method stub
+     *
      * @param $stub
      * @param $name
      * @param $relationData
