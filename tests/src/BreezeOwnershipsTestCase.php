@@ -35,7 +35,7 @@ class BreezeOwnershipsTestCase extends \Orchestra\Testbench\TestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         $this->modelsDir = __DIR__ . '/Models';
         $this->relationsDir = $this->modelsDir . '/Relations';

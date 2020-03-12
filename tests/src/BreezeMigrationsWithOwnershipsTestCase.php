@@ -29,7 +29,7 @@ class BreezeMigrationsWithOwnershipsTestCase extends \Orchestra\Testbench\TestCa
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
         parent::setUp();
 

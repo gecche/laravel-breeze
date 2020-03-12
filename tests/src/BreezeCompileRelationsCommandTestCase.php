@@ -40,7 +40,7 @@ class BreezeCompileRelationsCommandTestCase extends \Orchestra\Testbench\TestCas
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
 
         $this->modelsDir = __DIR__ .'/ModelsForCompiling';

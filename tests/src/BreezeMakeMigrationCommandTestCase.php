@@ -62,7 +62,7 @@ class BreezeMakeMigrationCommandTestCase extends \Orchestra\Testbench\TestCase
      *
      * @return void
      */
-    public function setUp()
+    protected function setUp(): void
     {
 
         $this->laravelAppPath = __DIR__ . '/../../vendor/orchestra/testbench-core/laravel';
