@@ -111,7 +111,7 @@ class CompileRelationsCommand extends Command
              * Here we build the contents of the relational trait
              */
             $this->relationErrors = [];
-            if (!($traitContents = $this->compileTrait($modelData['modelRelations'],$modelName,$traitStub))) {
+            if (!($traitContents = $this->compileTrait($modelData,$traitStub))) {
                 $this->info('Empty or not suitable relational array in file ' . $modelFilename);
                 continue;
             };
@@ -258,6 +258,7 @@ class CompileRelationsCommand extends Command
 
         return [
             'modelContents' => $modelContents,
+            'modelClassName' => $modelClassName,
             'modelName' => $modelName,
             'modelContentsStartingPoint' => $classContentsStart,
             'modelRelations' => $modelRelations,
@@ -281,15 +282,17 @@ class CompileRelationsCommand extends Command
 
 
     /**
-     * @param $modelRelations
-     * @param $modelClassName
+     * @param $modelData
      * @param $traitStub
      * @return bool|mixed
      */
-    protected function compileTrait($modelRelations, $modelClassName, $traitStub)
+    protected function compileTrait($modelData, $traitStub)
     {
         $traitContents = [];
 
+        $modelRelations = Arr::get($modelData,'modelRelations',[]);
+        $modelClassName = Arr::get($modelData,'modelClassName');
+        $modelName = Arr::get($modelData,'modelName');
         /*
          * We iterate on the relations to build the trait contents
          */
@@ -326,7 +329,7 @@ class CompileRelationsCommand extends Command
          * We replace the relation trait stub with the suitable data
          */
         $traitStub = str_replace('{{modelsnamespace}}',$this->modelsNamespace,$traitStub);
-        $traitStub = str_replace('{{ModelName}}',$modelClassName,$traitStub);
+        $traitStub = str_replace('{{ModelName}}',$modelName,$traitStub);
 
         $traitRelations = '';
         foreach ($traitContents as $relationName => $relationStub) {
