@@ -35,6 +35,7 @@ The package is fully tested.
  5.7.x    | 1.3.x
  5.8.x    | 1.4.x
  6.x      | 2.x
+ 7.x      | 3.x
 
 ### Installation
 
