@@ -191,17 +191,14 @@ trait HasValidation
     }
 
     /**
-     * Appends the model ID to the 'unique' rules given. The resulting array can
-     * then be fed to a Ardent save so that unchanged values don't flag a validation
-     * issue. It can also be used with {@link Illuminate\Foundation\Http\FormRequest}
-     * to painlessly validate model requests.
+     * Appends the model ID to the 'unique' rules given.
      * Rules can be in either strings with pipes or arrays, but the returned rules
      * are in arrays.
      *
      * @param array $rules
      * @return array Rules with exclusions applied
      */
-    public function buildUniqueExclusionRules(array $rules = [])
+    protected function buildUniqueExclusionRules(array $rules = [])
     {
 
         if (!count($rules))

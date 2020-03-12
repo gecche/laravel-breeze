@@ -3,6 +3,8 @@
 namespace Gecche\Breeze\Console;
 
 use Gecche\Breeze\Breeze;
+use Gecche\Breeze\BreezeInterface;
+use Gecche\Breeze\Contracts\HasRelationshipsInterface;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Str;
@@ -223,7 +225,22 @@ class CompileRelationsCommand extends Command
 
         $modelClassName = $this->modelsNamespace . '\\' . $modelName;
 
-        $reflectionObject = new \ReflectionClass($modelClassName);
+        try {
+            $reflectionObject = new \ReflectionClass($modelClassName);
+        } catch (\ReflectionException $e) {
+            return false;
+        }
+
+
+
+        if (!$reflectionObject->implementsInterface(HasRelationshipsInterface::class)) {
+            return false;
+        }
+
+
+
+
+
         /*
          * We guess if the the file is suitable for compiling relations.
          * We try to check if

@@ -19,111 +19,7 @@ use Gecche\Breeze\Relations\BelongsToMany;
  *
  *
 
-   RELATION TYPES AND AND ARGUMENTS
 
-    HasOne:
-        'relationName' => [
-            Breeze::$HAS_ONE,
-            'related' => required,
-            'foreignKey' => optional,
-            'localKey' => optional,
-        ]
-
-    HasMany:
-        'relationName' => [
-            Breeze::$HAS_MANY
-            'related' => 'required',
-            'foreignKey' => optional,
-            'localKey' => optional
-        ]
-
-    HasManyThrough:
-        'relationName' => [
-            Breeze::$HAS_MANY_THROUGH
-            'related' => 'required',
-            'through' => 'required',
-            'firstKey' => optional,
-            'secondKey' => optional,
-            'localKey' => optional,
-            'secondLocalKey' => optional
-        ]
-
-    BelongsTo:
-        'relationName' => [
-            Breeze::$BELONGS_TO
-            'related' => 'required',
-            'foreignKey' => optional,
-            'ownerKey' => optional,
-            'relation' => optional
-        ]
-
-    BelongsToMany:
-        'relationName' => [
-            Breeze::$BELONGS_TO_MANY
-            'related' => 'required',
-            'table' => optional,
-            'foreignPivotKey' => optional,
-            'relatedPivotKey' => optional,
-            'parentKey' => optional,
-            'relatedKey' => optional,
-            'relation' => optional,
-            'pivotFields' => 'nullableArray'
-        ]
-
-    MorphTo:
-        'relationName' => [
-            Breeze::$MORPH_TO
-            'name' => optional,
-            'type' => optional,
-            'id' => optional
-        ]
-
-    MorphOne:
-        'relationName' => [
-            Breeze::$MORPH_ONE
-            'related' => 'required',
-            'name' => 'required',
-            'type' => optional,
-            'id' => optional,
-            'localKey' => optional
-        ]
-
-    MorphMany:
-        'relationName' => [
-            Breeze::$MORPH_MANY
-            'related' => 'required',
-            'name' => 'required',
-            'type' => optional,
-            'id' => optional,
-            'localKey' => optional
-        ]
-
-    MorphToMany:
-        'relationName' => [
-            Breeze::$MORPH_TO_MANY
-            'related' => 'required',
-            'name' => 'required',
-            'table' => optional,
-            'foreignPivotKey' => optional,
-            'relatedPivotKey' => optional,
-            'parentKey' => optional,
-            'relatedKey' => optional,
-            'inverse ' => false,
-            'pivotFields' => 'nullableArray'
-        ]
-
-    MorphedByMany:
-        'relationName' => [
-            Breeze::$MORPHED_BY_MANY
-            'related' => 'required',
-            'name' => 'required',
-            'table' => optional,
-            'foreignPivotKey' => optional,
-            'relatedPivotKey' => optional,
-            'parentKey' => optional,
-            'relatedKey' => optional,
-            'pivotFields' => 'nullableArray'
-        ]
 
 
  */
@@ -145,43 +41,159 @@ trait HasRelationships
 
 
     /**
-     * Can be used to ease declaration of relationships in Ardent models.
-     * Follows closely the behavior of the relation methods used by Eloquent, but packing them into an indexed array
-     * with relation constants make the code less cluttered.
+     * This array is used to define relations in a static way and then compiled via
+     * the Gecche\Breeze\Console\CompileRelationsCommand.
      *
-     * It should be declared with camel-cased keys as the relation name, and value being a mixed array with the
-     * relation constant being the first (0) value, the second (1) being the classname and the next ones (optionals)
-     * having named keys indicating the other arguments of the original methods: 'foreignKey' (belongsTo, hasOne,
-     * belongsToMany and hasMany); 'table' and 'otherKey' (belongsToMany only); 'name', 'type' and 'id' (specific for
-     * morphTo, morphOne and morphMany).
-     * Exceptionally, the relation type MORPH_TO does not include a classname, following the method declaration of
-     * {@link \Illuminate\Database\Eloquent\Model::morphTo}.
+     * Each entry of the array has the relation name as its key and another array for the relations' parameters
+     * as its value.
+     * E.g.
+     * class Author extends Breeze {
      *
-     * Example:
-     * <code>
-     * class Order extends Ardent {
-     *     protected static $relations = array(
-     *         'items'    => array(self::HAS_MANY, 'Item'),
-     *         'owner'    => array(self::HAS_ONE, 'User', 'foreignKey' => 'user_id'),
-     *         'pictures' => array(self::MORPH_MANY, 'Picture', 'name' => 'imageable')
-     *     );
+     * ...
+     *
+     * protected static $relationsData = [
+     *       'books' => [
+     *          self::HAS_MANY,
+     *          'related' => Book::class
+     *      ],
+     *
+     *       'coauthored' => [
+     *          self::BELONGS_TO_MANY,
+     *           'related' => Book::class,
+     *           'table' => 'books_coauthors',
+     *           'foreignPivotKey' => 'coauthor_id',
+     *           'pivotFields' => ['created_at','updated_at','percentage'],
+     *     ],
+     * ];
+     *
+     * ...
+     *
      * }
-     * </code>
+     *
+     * In the relation's parameters array, the first entry should be the relation type using a constant defined
+     * Gecche\Breeze\Contracts\HasRelationshipsInterface.
+     * The other entries are exactly the same values defined in the Eloquent relation methods and they are listed below.
+     * The only addition is the 'pivotFields' entry which can be used in any relation type which handles pivot fields.
+     *
      *
      * @see \Illuminate\Database\Eloquent\Model::hasOne
+        HasOne:
+        'relationName' => [
+            Breeze::$HAS_ONE,
+            'related' => required,
+            'foreignKey' => optional,
+            'localKey' => optional,
+        ]
+
      * @see \Illuminate\Database\Eloquent\Model::hasMany
+        HasMany:
+        'relationName' => [
+            Breeze::$HAS_MANY,
+            'related' => 'required',
+            'foreignKey' => optional,
+            'localKey' => optional
+        ]
+
      * @see \Illuminate\Database\Eloquent\Model::hasManyThrough
+        HasManyThrough:
+        'relationName' => [
+            Breeze::$HAS_MANY_THROUGH,
+            'related' => 'required',
+            'through' => 'required',
+            'firstKey' => optional,
+            'secondKey' => optional,
+            'localKey' => optional,
+            'secondLocalKey' => optional
+        ]
+
      * @see \Illuminate\Database\Eloquent\Model::belongsTo
+        BelongsTo:
+            'relationName' => [
+            Breeze::$BELONGS_TO
+            'related' => 'required',
+            'foreignKey' => optional,
+            'ownerKey' => optional,
+            'relation' => optional
+        ]
+
      * @see \Illuminate\Database\Eloquent\Model::belongsToMany
+        BelongsToMany:
+            'relationName' => [
+            Breeze::$BELONGS_TO_MANY
+            'related' => 'required',
+            'table' => optional,
+            'foreignPivotKey' => optional,
+            'relatedPivotKey' => optional,
+            'parentKey' => optional,
+            'relatedKey' => optional,
+            'relation' => optional,
+            'pivotFields' => 'nullableArray'
+        ]
+
      * @see \Illuminate\Database\Eloquent\Model::morphTo
+        MorphTo:
+            'relationName' => [
+            Breeze::$MORPH_TO
+            'name' => optional,
+            'type' => optional,
+            'id' => optional
+        ]
+
      * @see \Illuminate\Database\Eloquent\Model::morphOne
+        MorphOne:
+            'relationName' => [
+            Breeze::$MORPH_ONE
+            'related' => 'required',
+            'name' => 'required',
+            'type' => optional,
+            'id' => optional,
+            'localKey' => optional
+        ]
+
      * @see \Illuminate\Database\Eloquent\Model::morphMany
+        MorphMany:
+            'relationName' => [
+            Breeze::$MORPH_MANY
+            'related' => 'required',
+            'name' => 'required',
+            'type' => optional,
+            'id' => optional,
+            'localKey' => optional
+        ]
+
      * @see \Illuminate\Database\Eloquent\Model::morphToMany
+        MorphToMany:
+            'relationName' => [
+            Breeze::$MORPH_TO_MANY
+            'related' => 'required',
+            'name' => 'required',
+            'table' => optional,
+            'foreignPivotKey' => optional,
+            'relatedPivotKey' => optional,
+            'parentKey' => optional,
+            'relatedKey' => optional,
+            'inverse ' => false,
+            'pivotFields' => 'nullableArray'
+        ]
+
      * @see \Illuminate\Database\Eloquent\Model::morphedByMany
+        MorphedByMany:
+            'relationName' => [
+            Breeze::$MORPHED_BY_MANY
+            'related' => 'required',
+            'name' => 'required',
+            'table' => optional,
+            'foreignPivotKey' => optional,
+            'relatedPivotKey' => optional,
+            'parentKey' => optional,
+            'relatedKey' => optional,
+            'pivotFields' => 'nullableArray'
+        ]
+     *
      *
      * @var array
      */
-    protected static $relationsData = array();
+    protected static $relationsData = [];
 
     /**
      * @return array
@@ -266,27 +278,4 @@ trait HasRelationships
     }
 
 
-    public function getPivotKeys($relationName)
-    {
-        $relation = static::$relationsData[$relationName];
-        $relationType = $relation[0];
-
-        switch ($relationType) {
-            case self::HAS_ONE:
-            case self::HAS_MANY:
-            case self::BELONGS_TO:
-            case self::MORPH_TO:
-            case self::MORPH_ONE:
-            case self::MORPH_MANY:
-                return [];
-
-            case self::BELONGS_TO_MANY:
-
-                if (isset($relation['pivotKeys']) && is_array($relation['pivotKeys'])) {
-                    return $relation['pivotKeys'];
-                }
-                return [];
-
-        }
-    }
 }

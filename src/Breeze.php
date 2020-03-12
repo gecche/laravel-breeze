@@ -1,10 +1,12 @@
 <?php namespace Gecche\Breeze;
 
 use Gecche\Breeze\Concerns\HasValidation;
-use Gecche\Breeze\Concerns\HasFormHelpers;
 use Gecche\Breeze\Concerns\HasOwnerships;
 use Gecche\Breeze\Concerns\HasRelationships as BreezeHasRelationships;
 
+use Gecche\Breeze\Contracts\HasOwnershipsInterface;
+use Gecche\Breeze\Contracts\HasRelationshipsInterface;
+use Gecche\Breeze\Contracts\HasValidationInterface;
 use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Model;
 
@@ -19,7 +21,7 @@ use Illuminate\Database\Eloquent\Concerns\HasRelationships;
  * - HasRelationships for defining relations in a cleaner way by using an array
  */
 
-abstract class Breeze extends Model implements BreezeInterface {
+abstract class Breeze extends Model implements HasValidationInterface, HasOwnershipsInterface, HasRelationshipsInterface {
 
 
     use HasValidation;
