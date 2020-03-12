@@ -185,10 +185,10 @@ class BreezeMakeMigrationCommandTestCase extends \Orchestra\Testbench\TestCase
 
                 $fileContents = File::get($this->migrationsDir . '/' . $file);
                 foreach ($stringsToCheck as $stringToCheck) {
-                    $this->assertContains($stringToCheck, $fileContents);
+                    $this->assertStringContainsString($stringToCheck, $fileContents);
                 }
                 foreach ($stringsShouldNotContains as $stringToCheck) {
-                    $this->assertNotContains($stringToCheck, $fileContents);
+                    $this->assertStringNotContainsString($stringToCheck, $fileContents);
                 }
             }
 

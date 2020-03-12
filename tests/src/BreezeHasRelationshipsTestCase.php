@@ -273,7 +273,7 @@ class BreezeHasRelationshipsTestCase extends \Orchestra\Testbench\TestCase
 //
 //        $output = Artisan::output();
 //
-//        $this->assertContains($expectedArtisanOutput,$output);
+//        $this->assertStringContainsString($expectedArtisanOutput,$output);
 //        $this->assertDirectoryExists($this->relationsDir);
 //        $this->assertFileNotExists($expectedPippoRelationTraitFile);
 //    }

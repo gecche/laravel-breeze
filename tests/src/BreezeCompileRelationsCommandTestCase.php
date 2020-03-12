@@ -130,7 +130,7 @@ class BreezeCompileRelationsCommandTestCase extends \Orchestra\Testbench\TestCas
 
 
             $fileContent = File::get($modelFile);
-            $this->assertContains($traitUseLine,$fileContent);
+            $this->assertStringContainsString($traitUseLine,$fileContent);
 
             $this->assertFileExists($relationFile);
             $relationFileContent = File::get($relationFile);
@@ -162,7 +162,7 @@ class BreezeCompileRelationsCommandTestCase extends \Orchestra\Testbench\TestCas
 
         $output = Artisan::output();
 
-        $this->assertContains($expectedArtisanOutput,$output);
+        $this->assertStringContainsString($expectedArtisanOutput,$output);
         $this->assertDirectoryExists($this->relationsDir);
         $this->assertFileNotExists($expectedPippoRelationTraitFile);
     }
