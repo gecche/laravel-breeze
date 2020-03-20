@@ -228,15 +228,11 @@ class CompileRelationsCommand extends Command
             return false;
         }
 
-
-
         if (!$reflectionObject->implementsInterface(HasRelationshipsInterface::class) ||
-            $reflectionObject->getNamespaceName() != $this->modelsNamespace
+            "\\".$reflectionObject->getNamespaceName() != $this->modelsNamespace
         ) {
             return false;
         }
-
-
 
         /*
          * We guess the starting position of the class code by looking for the first "{".
@@ -328,7 +324,7 @@ class CompileRelationsCommand extends Command
         /*
          * We replace the relation trait stub with the suitable data
          */
-        $traitStub = str_replace('{{modelsnamespace}}',$this->modelsNamespace,$traitStub);
+        $traitStub = str_replace('{{modelsnamespace}}',ltrim($this->modelsNamespace,"\\"),$traitStub);
         $traitStub = str_replace('{{ModelName}}',$modelName,$traitStub);
 
         $traitRelations = '';
