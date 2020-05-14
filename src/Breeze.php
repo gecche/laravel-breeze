@@ -4,6 +4,7 @@ use Gecche\Breeze\Concerns\HasValidation;
 use Gecche\Breeze\Concerns\HasOwnerships;
 use Gecche\Breeze\Concerns\HasRelationships as BreezeHasRelationships;
 
+use Gecche\Breeze\Contracts\BreezeInterface;
 use Gecche\Breeze\Contracts\HasOwnershipsInterface;
 use Gecche\Breeze\Contracts\HasRelationshipsInterface;
 use Gecche\Breeze\Contracts\HasValidationInterface;
@@ -21,7 +22,7 @@ use Illuminate\Database\Eloquent\Concerns\HasRelationships;
  * - HasRelationships for defining relations in a cleaner way by using an array
  */
 
-abstract class Breeze extends Model implements HasValidationInterface, HasOwnershipsInterface, HasRelationshipsInterface {
+abstract class Breeze extends Model implements BreezeInterface {
 
 
     use HasValidation;
