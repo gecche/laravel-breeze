@@ -361,6 +361,9 @@ class CompileRelationsCommand extends Command
          * We perform the checks and we get the concrete relation data
          */
         $relationData = $this->checkAndGetRelationDataArray($dataToCheck, $relationData, $name);
+        if ($relationData === false ) {
+            return false;
+        }
 
         /*
          * We fnally compile the relation method stub
