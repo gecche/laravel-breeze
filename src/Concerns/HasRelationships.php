@@ -37,7 +37,8 @@ trait HasRelationships
         self::BELONGS_TO, self::BELONGS_TO_MANY,
         self::MORPH_TO, self::MORPH_ONE, self::MORPH_MANY,
         self::MORPH_TO_MANY, self::MORPHED_BY_MANY,
-        self::HAS_ONE_THROUGH
+        self::HAS_ONE_THROUGH,
+        self::BELONGS_TO_THROUGH,
     );
 
 
@@ -194,7 +195,7 @@ trait HasRelationships
      * @see \Illuminate\Database\Eloquent\Model::hasOneThrough
         HasOneThrough:
             'relationName' => [
-            Breeze::$Has_ONE_THROUGH
+            Breeze::$HAS_ONE_THROUGH
             'related' => 'required',
             'through' => 'required',
             'firstKey' => optional,
@@ -202,6 +203,19 @@ trait HasRelationships
             'localKey' => optional,
             'secondLocalKey' => optional
         ]
+
+     * @see \Znck\Eloquent\Traits::belongsToThrough
+        HasOneThrough:
+            'relationName' => [
+            Breeze::$BELONGS_TO_THROUGH
+            'related' => 'required',
+            'through' => 'required',
+            'localKey' => optional,
+            'prefix' => optional,
+            'foreignKeyLookup' => nullableArray
+     ]
+
+     *
      *
      *
      * @var array
