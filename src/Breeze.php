@@ -12,6 +12,7 @@ use Illuminate\Database\Eloquent\Concerns\HasTimestamps;
 use Illuminate\Database\Eloquent\Model;
 
 use Illuminate\Database\Eloquent\Concerns\HasRelationships;
+use Znck\Eloquent\Traits\BelongsToThrough;
 
 
 /**
@@ -39,5 +40,7 @@ abstract class Breeze extends Model implements BreezeInterface {
         BreezeHasRelationships::newBelongsToMany insteadof HasRelationships;
         BreezeHasRelationships::getMorphClass insteadof HasRelationships;
     }
+
+    use BelongsToThrough;
 
 }

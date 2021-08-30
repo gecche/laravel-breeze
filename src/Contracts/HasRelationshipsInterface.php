@@ -36,6 +36,8 @@ interface  HasRelationshipsInterface {
 
     const HAS_ONE_THROUGH = 'hasOneThrough';
 
+    const BELONGS_TO_THROUGH = 'belongsToThrough';
+
 
     /**
      * Returns the array of allowed relation types

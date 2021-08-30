@@ -400,6 +400,7 @@ class CompileRelationsCommand extends Command
                 ];
 
             case 'HasManyThrough':
+            case 'HasOneThrough':
                 return [
                     'related' => 'required',
                     'through' => 'required',
@@ -479,6 +480,14 @@ class CompileRelationsCommand extends Command
                     'pivotFields' => 'nullableArray',
                 ];
 
+            case 'BelongsToThrough':
+                return [
+                    'related' => 'required',
+                    'through' => 'required',
+                    'localKey' => null,
+                    'prefix' => '',
+                    'foreignKeyLookup' => 'nullableArray'
+                ];
             default:
                 return false;
 
