@@ -1,0 +1,6 @@
+    public function {{relationName}}() {
+
+        return $this->morphedByMany({{related}}, {{name}}, {{table}}, {{foreignPivotKey}},
+                                    {{relatedPivotKey}}, {{parentKey}}, {{relatedKey}});
+    
+    }

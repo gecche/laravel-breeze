@@ -1,0 +1,6 @@
+    public function {{relationName}}() {
+
+        return $this->belongsToMany({{related}}, {{table}}, {{foreignPivotKey}}, {{relatedPivotKey}},
+                                    {{parentKey}}, {{relatedKey}}, {{relation}});
+    
+    }

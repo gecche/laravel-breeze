@@ -1,0 +1,5 @@
+    public function {{relationName}}() {
+
+        return $this->hasManyThrough({{related}}, {{through}}, {{firstKey}}, {{secondKey}}, {{localKey}}, {{secondLocalKey}});
+    
+    }

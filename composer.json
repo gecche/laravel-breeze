@@ -1,0 +1,50 @@
+{
+    "name": "gecche/laravel-breeze",
+    "description": "Collection of traits for extending Laravel Eloquent models",
+    "keywords": ["laravel", "eloquent", "model"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Giacomo Terreni",
+            "email": "giacomo.terreni@gmail.com"
+        }
+    ],
+    "require": {
+        "laravel/framework": "^7.0",
+        "staudenmeir/belongs-to-through": "^2.5"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.3.1",
+        "phpunit/phpunit": "^8.5",
+        "limedeck/phpunit-detailed-printer": "^5.0",
+        "orchestra/testbench": "^5.0",
+        "orchestra/testbench-browser-kit": "^5.0"
+    },
+    "autoload": {
+        "classmap": [
+            "tests/database/factories"
+        ],
+        "psr-4": {
+            "Gecche\\Breeze\\": "src/"
+        },
+        "files": [
+
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Gecche\\Breeze\\Tests\\": "tests/src"
+        }
+    },
+    "scripts": {
+        "test": "phpunit"
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Gecche\\Breeze\\BreezeServiceProvider",
+                "Gecche\\Breeze\\Database\\MigrationServiceProvider"
+            ]
+        }
+    }
+}
