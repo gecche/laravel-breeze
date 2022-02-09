@@ -131,15 +131,16 @@ class BreezeMakeMigrationCommandTestCase extends \Orchestra\Testbench\TestCase
         $filesToCheck = $this->getMigrationFiles(array_keys($this->migrationsToMake));
         $this->assertEquals(count($this->migrationsToMake), count($filesToCheck));
 
-        $timestampsStringsTocheck = [
-            'null' => '$table->nullableTimestamps();',
-            'no' => '$table->nullableTimestamps();',
-        ];
+//        $timestampsStringsTocheck = [
+//            'null' => '$table->nullableTimestamps();',
+//            'no' => '$table->nullableTimestamps();',
+//        ];
 
         foreach ($this->migrationsToMake as $migrationName => $migrationParams) {
 
             $files = $this->getMigrationFiles($migrationName);
 
+            $stringsToCheck = [];
             $stringsShouldNotContains = [];
 
             if (array_key_exists('--create', $migrationParams)) {
