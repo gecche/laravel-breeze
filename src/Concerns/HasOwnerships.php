@@ -19,8 +19,18 @@ trait HasOwnerships
      *
      * @return bool
      */
-    public function touch()
+    public function touch($attribute = null)
     {
+        if ($attribute) {
+            $this->$attribute = $this->freshTimestamp();
+
+            if ($this->usesOwnerships()) {
+                $this->updateOwnerships();
+            }
+
+            return $this->save();
+        }
+
         if (! $this->usesTimestamps() && ! $this->usesOwnerships()) {
             return false;
         }
