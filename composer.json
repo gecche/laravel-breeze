@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "laravel/framework": "^7.0"
+        "laravel/framework": "^7.0",
+        "staudenmeir/belongs-to-through": "^2.5"
     },
     "require-dev": {
         "mockery/mockery": "^1.3.1",

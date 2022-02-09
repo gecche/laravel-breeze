@@ -95,6 +95,6 @@ class MigrationCreator extends \Illuminate\Database\Migrations\MigrationCreator
      */
     public function stubPath()
     {
-        return __DIR__.'/stubs';
+        return config('database.migrations-stub-path') ?: __DIR__.'/stubs';
     }
 }

@@ -226,14 +226,12 @@ class CompileRelationsCommand extends Command
         }
 
 
-
         if (!$reflectionObject->implementsInterface(HasRelationshipsInterface::class) ||
-            $reflectionObject->getNamespaceName() != $this->modelsNamespace
+            trim($reflectionObject->getNamespaceName(),"\\") != trim($this->modelsNamespace,"\\")
         ) {
+
             return false;
         }
-
-
 
         /*
          * We guess the starting position of the class code by looking for the first "{".
@@ -325,7 +323,7 @@ class CompileRelationsCommand extends Command
         /*
          * We replace the relation trait stub with the suitable data
          */
-        $traitStub = str_replace('{{modelsnamespace}}',$this->modelsNamespace,$traitStub);
+        $traitStub = str_replace('{{modelsnamespace}}',ltrim($this->modelsNamespace,"\\"),$traitStub);
         $traitStub = str_replace('{{ModelName}}',$modelName,$traitStub);
 
         $traitRelations = '';
@@ -362,6 +360,9 @@ class CompileRelationsCommand extends Command
          * We perform the checks and we get the concrete relation data
          */
         $relationData = $this->checkAndGetRelationDataArray($dataToCheck, $relationData, $name);
+        if ($relationData === false ) {
+            return false;
+        }
 
         /*
          * We fnally compile the relation method stub
@@ -398,6 +399,7 @@ class CompileRelationsCommand extends Command
                 ];
 
             case 'HasManyThrough':
+            case 'HasOneThrough':
                 return [
                     'related' => 'required',
                     'through' => 'required',
@@ -477,6 +479,14 @@ class CompileRelationsCommand extends Command
                     'pivotFields' => 'nullableArray',
                 ];
 
+            case 'BelongsToThrough':
+                return [
+                    'related' => 'required',
+                    'through' => 'required',
+                    'localKey' => null,
+                    'prefix' => '',
+                    'foreignKeyLookup' => 'nullableArray'
+                ];
             default:
                 return false;
 
