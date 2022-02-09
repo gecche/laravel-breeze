@@ -110,7 +110,7 @@ class BreezeCompileRelationsCommandTestCase extends \Orchestra\Testbench\TestCas
         ];
 
 
-        $this->assertDirectoryNotExists($this->relationsDir);
+        $this->assertDirectoryDoesNotExist($this->relationsDir);
 
 
         foreach ($modelNames as $modelName) {
@@ -155,7 +155,7 @@ class BreezeCompileRelationsCommandTestCase extends \Orchestra\Testbench\TestCas
         $expectedArtisanOutput = 'Pippo.php not guessed as a model';
         $expectedPippoRelationTraitFile = $this->relationsDir . '/PippoRelations.php';
 
-        $this->assertDirectoryNotExists($this->relationsDir);
+        $this->assertDirectoryDoesNotExist($this->relationsDir);
 
 
         $this->artisan('breeze:relations');
@@ -164,7 +164,7 @@ class BreezeCompileRelationsCommandTestCase extends \Orchestra\Testbench\TestCas
 
         $this->assertStringContainsString($expectedArtisanOutput,$output);
         $this->assertDirectoryExists($this->relationsDir);
-        $this->assertFileNotExists($expectedPippoRelationTraitFile);
+        $this->assertFileDoesNotExist($expectedPippoRelationTraitFile);
     }
 
 
