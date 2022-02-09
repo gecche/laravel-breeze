@@ -1,14 +1,9 @@
 <?php
-
-use Gecche\Breeze\Facades\Schema;
-use Gecche\Breeze\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-
-/**
- * Class Posts
- */
-class CreateBooksCoauthorsTable extends Migration
+return new class extends Migration
 {
 
     /**
@@ -38,4 +33,4 @@ class CreateBooksCoauthorsTable extends Migration
         Schema::drop('books_coauthors');
     }
 
-}
+};

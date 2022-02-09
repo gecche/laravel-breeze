@@ -37,6 +37,7 @@ The package is fully tested.
  6.x      | 2.x
  7.x      | 3.x
  8.x      | 4.x
+ 9.x      | 5.x
 
 ### Installation
 
@@ -45,7 +46,7 @@ Add gecche/laravel-breeze as a requirement to composer.json:
 ```javascript
 {
     "require": {
-        "gecche/laravel-breeze": "4.*"
+        "gecche/laravel-breeze": "5.*"
     }
 }
 ```
@@ -313,28 +314,27 @@ By default the Breeze model expects that the associated table contains two owner
  `created_by` and `updated_by` keeping track of the currently authenticated user which has created the model 
  and the last one which has updated the model. 
  
-The packages handles the automaitc update of the ownerships fields in the same way as timestamps 
+The packages handles the automatic update of the ownerships fields in the same way as timestamps 
 are managed by stanrd Eloquent models.
 
 #### Migrations for ownerships
 
-The Breeze package overrides the standard `migrate:make` command by adding the availability of the 
-`ownerships` and `nullableOwnerships` methods which by default add to a table the `created_by` and `updated_by` 
-fields with an integer type either not nulalble or nullable respectively.
+The Breeze package adds the `ownerships` and `nullableOwnerships` macro for the
+`Schema` builder which add to a table the `created_by` and `updated_by` 
+fields with an integer type either not nullable or nullable respectively.
+The Breeze package also overrides the standard `migrate:make` command by adding the  
+`ownerships` option which can take `yes`, `null` and `no` as values (default: `no`).
  
 For example:
 
 ```
 <?php
 
-use Gecche\Breeze\Facades\Schema;
-use Gecche\Breeze\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-/**
- * Class Posts
- */
-class CreateAuthorsTable extends Migration
+return new class extends Migration
 {
 
     /**
@@ -345,7 +345,7 @@ class CreateAuthorsTable extends Migration
     public function up()
     {
         Schema::create('authors', function (Blueprint $table) {
-            $table->increments('id');
+            $table->id();
 
             ...
             
@@ -358,15 +358,8 @@ class CreateAuthorsTable extends Migration
     ...
 
 
-}
+};
 ```
 
-Please note that  if you don't use the artisan command, you can use the ownerships methods in a migration, 
-by replacing the standard Schema classes:
-
-```
-use Gecche\Breeze\Facades\Schema;
-use Gecche\Breeze\Database\Schema\Blueprint;
-```
 
 

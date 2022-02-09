@@ -9,7 +9,7 @@
 namespace Gecche\Breeze\Tests;
 
 use Gecche\Breeze\Breeze;
-use Gecche\Breeze\Facades\Schema;
+use Illuminate\Suppport\Facades\Schema;
 use Gecche\Breeze\Tests\Models\Author;
 use Gecche\Breeze\Tests\Models\Book;
 use Gecche\Breeze\Tests\Models\User;

@@ -9,6 +9,8 @@
 namespace Gecche\Breeze\Tests;
 
 use Gecche\Breeze\Breeze;
+use Gecche\Breeze\Database\Console\Migrations\MigrateMakeCommand;
+use Gecche\Breeze\Database\Migrations\MigrationCreator;
 use Gecche\Breeze\Tests\ModelsForCompiling\Author;
 use Gecche\Breeze\Tests\ModelsForCompiling\Book;
 
@@ -104,6 +106,7 @@ class BreezeMakeMigrationCommandTestCase extends \Orchestra\Testbench\TestCase
     }
 
 
+
     /*
      * TEST #1 FOR MAKE MIGRATION COMMAND
      *
@@ -128,21 +131,16 @@ class BreezeMakeMigrationCommandTestCase extends \Orchestra\Testbench\TestCase
         $filesToCheck = $this->getMigrationFiles(array_keys($this->migrationsToMake));
         $this->assertEquals(count($this->migrationsToMake), count($filesToCheck));
 
-        $useStringsToCheck = [
-            "use Gecche\\Breeze\\Facades\\Schema;",
-            "use Gecche\\Breeze\\Database\\Schema\\Blueprint;",
-        ];
-
-        $timestampsStringsTocheck = [
-            'null' => '$table->nullableTimestamps();',
-            'no' => '$table->nullableTimestamps();',
-        ];
+//        $timestampsStringsTocheck = [
+//            'null' => '$table->nullableTimestamps();',
+//            'no' => '$table->nullableTimestamps();',
+//        ];
 
         foreach ($this->migrationsToMake as $migrationName => $migrationParams) {
 
             $files = $this->getMigrationFiles($migrationName);
 
-            $stringsToCheck = $useStringsToCheck;
+            $stringsToCheck = [];
             $stringsShouldNotContains = [];
 
             if (array_key_exists('--create', $migrationParams)) {
