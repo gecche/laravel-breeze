@@ -228,9 +228,11 @@ class CompileRelationsCommand extends Command
             return false;
         }
 
+
         if (!$reflectionObject->implementsInterface(HasRelationshipsInterface::class) ||
-            "\\".$reflectionObject->getNamespaceName() != $this->modelsNamespace
+            trim($reflectionObject->getNamespaceName(),"\\") != trim($this->modelsNamespace,"\\")
         ) {
+
             return false;
         }
 
