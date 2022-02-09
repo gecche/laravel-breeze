@@ -14,20 +14,6 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
      */
     protected $defer = true;
 
-    /**
-     * Register the service provider.
-     *
-     * @return void
-     */
-    public function register()
-    {
-        $this->registerRepository();
-
-        $this->registerMigrator();
-
-        $this->registerCreator();
-    }
-
 
     /**
      * Register the migration creator.
@@ -51,7 +37,7 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
 
         $app = $this->app;
 
-        $this->app->extend('command.migrate.make', function () use ($app) {
+        $this->app->extend(\Illuminate\Database\Console\Migrations\MigrateMakeCommand::class, function () use ($app) {
             // Once we have the migration creator registered, we will create the command
             // and inject the creator. The creator is responsible for the actual file
             // creation of the migrations, and may be extended by these developers.
@@ -64,5 +50,29 @@ class MigrationServiceProvider extends \Illuminate\Database\MigrationServiceProv
 
 
     }
+//    /**
+//     * Perform post-registration booting of services.
+//     *
+//     * @return void
+//     */
+//    /**
+//     * Register the command.
+//     *
+//     * @return void
+//     */
+//    protected function registerMigrateMakeCommand()
+//    {
+//        $this->app->singleton(MigrateMakeCommand::class, function ($app) {
+//            echo "hereMMC";
+//            // Once we have the migration creator registered, we will create the command
+//            // and inject the creator. The creator is responsible for the actual file
+//            // creation of the migrations, and may be extended by these developers.
+//            $creator = $app['migration.creator'];
+//
+//            $composer = $app['composer'];
+//
+//            return new MigrateMakeCommand($creator, $composer);
+//        });
+//    }
 
 }

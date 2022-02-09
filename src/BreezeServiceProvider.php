@@ -7,7 +7,9 @@ use Gecche\Breeze\Database\Console\Migrations\MigrateMakeCommand;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Query\Builder as DBBuilder;
 
+use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 
 class BreezeServiceProvider extends ServiceProvider
@@ -63,7 +65,7 @@ class BreezeServiceProvider extends ServiceProvider
     {
 
         $this->publishes([
-            __DIR__.'/config/breeze.php' => config_path('breeze.php'),
+            __DIR__ . '/config/breeze.php' => config_path('breeze.php'),
         ]);
 
         Builder::macro('addUpdatedByColumn', function (array $values) {
@@ -80,6 +82,30 @@ class BreezeServiceProvider extends ServiceProvider
 
         Builder::macro('updateOwnerships', function (array $values) {
             return $this->toBase()->update($this->addUpdatedByColumn($this->addUpdatedAtColumn($values)));
+        });
+
+        Blueprint::macro('ownership', function ($column) {
+            return $this->addColumn('integer', $column)->unsigned()->index();
+        });
+
+        Blueprint::macro('ownerships', function () {
+            $this->ownership('created_by');
+
+            $this->ownership('updated_by');
+        });
+
+        Blueprint::macro('nullableOwnerships', function () {
+            $this->ownership('created_by')->nullable();
+
+            $this->ownership('updated_by')->nullable();
+        });
+
+        Blueprint::macro('dropOwnerships', function ($column) {
+            $this->dropColumn('created_by', 'updated_by');
+        });
+
+        Blueprint::macro('softDeletesOwnerships', function ($column = 'deleted_by') {
+            return $this->integer($column)->unsigned()->nullable();
         });
 
     }

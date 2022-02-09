@@ -17,6 +17,8 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
         {--create= : The table to be created.}
         {--table= : The table to migrate.}
         {--path= : The location where the migration file should be created.}
+        {--realpath : Indicate any provided migration file paths are pre-resolved absolute paths}
+        {--fullpath : Output the full path of the migration}
         {--timestamps=yes : Whether the migration table has timestamps (yes), no timestamps (no) or nullable timestamps (null) (only when creating, default=yes).}
         {--ownerships=no : Whether the migration table has ownerships (yes), no ownerships (no) or nullable ownerships (null) (only when creating, default=no).}';
 
@@ -55,9 +57,13 @@ class MigrateMakeCommand extends \Illuminate\Database\Console\Migrations\Migrate
                 break;
         }
 
-        $file = pathinfo($this->creator->create(
+        $file = $this->creator->create(
             $name, $this->getMigrationPath(), $table, $create, $timestamps, $ownerships
-        ), PATHINFO_FILENAME);
+        );
+
+        if (! $this->option('fullpath')) {
+            $file = pathinfo($file, PATHINFO_FILENAME);
+        }
 
         $this->line("<info>Created Migration:</info> {$file}");
     }

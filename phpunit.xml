@@ -13,6 +13,11 @@
     <testsuites>
         <testsuite name="Breeze Test Suite">
             <directory suffix=".php">./tests/src/</directory>
+            <exclude>./tests/src/BreezeCompileRelationsCommandTestCase.php</exclude>
+            <exclude>./tests/src/BreezeOwnershipsTestCase.php</exclude>
+            <exclude>./tests/src/BreezeMigrationsWithOwnershipsTestCase.php</exclude>
+            <exclude>./tests/src/BreezeHasValidationTestCase.php</exclude>
+            <exclude>./tests/src/BreezeHasRelationshipsTestCase.php</exclude>
         </testsuite>
     </testsuites>
     <filter>
