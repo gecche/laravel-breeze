@@ -34,7 +34,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Gecche\\Breeze\\Tests\\": "tests/src"
+            "Gecche\\Breeze\\Tests\\": "tests/src",
+            "Gecche\\Breeze\\Tests\\App\\": "tests/app"
         }
     },
     "scripts": {

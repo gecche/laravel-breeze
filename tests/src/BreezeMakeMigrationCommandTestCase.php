@@ -11,8 +11,8 @@ namespace Gecche\Breeze\Tests;
 use Gecche\Breeze\Breeze;
 use Gecche\Breeze\Database\Console\Migrations\MigrateMakeCommand;
 use Gecche\Breeze\Database\Migrations\MigrationCreator;
-use Gecche\Breeze\Tests\ModelsForCompiling\Author;
-use Gecche\Breeze\Tests\ModelsForCompiling\Book;
+use Gecche\Breeze\Tests\App\ModelsForCompiling\Author;
+use Gecche\Breeze\Tests\App\ModelsForCompiling\Book;
 
 use Gecche\Breeze\BreezeServiceProvider as ServiceProvider;
 use Gecche\Breeze\Database\MigrationServiceProvider as MigrationServiceProvider;
@@ -21,6 +21,7 @@ use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
+use Gecche\Breeze\Tests\App\TestServiceProvider;
 
 class BreezeMakeMigrationCommandTestCase extends \Orchestra\Testbench\TestCase
 {
