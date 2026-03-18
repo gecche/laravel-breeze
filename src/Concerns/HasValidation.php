@@ -74,6 +74,20 @@ trait HasValidation
     protected $validator;
 
 
+    public static function getRules($context = null)
+    {
+        switch ($context) {
+            case null:
+                return static::$rules;
+            default:
+                if (!array_key_exists($context, static::$rulesSets)) {
+                    throw new \InvalidArgumentException("Validation rules for context " . $context . " have not been defined.");
+                }
+
+                return static::$rulesSets[$context];
+        }
+    }
+
     /*
      * Get the model validation rules, custom messages and custom attributes
      * to be used by an external validator instance
@@ -125,17 +139,14 @@ trait HasValidation
 
         if (is_null($context)) {
             return [
-                static::$rules,
+                static::getRules(),
                 static::$customMessages,
                 static::$customAttributes,
             ];
         }
 
-        if (!array_key_exists($context, static::$rulesSets)) {
-            throw new \InvalidArgumentException("Validation rules for context " . $context . " have not been defined.");
-        }
         return [
-            static::$rulesSets[$context],
+            static::getRules($context),
             Arr::get(static::$customMessagesSets, $context, []),
             Arr::get(static::$customAttributesSets, $context, []),
         ];
