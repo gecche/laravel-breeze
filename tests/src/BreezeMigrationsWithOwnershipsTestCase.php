@@ -10,14 +10,15 @@ namespace Gecche\Breeze\Tests;
 
 use Gecche\Breeze\Breeze;
 use Illuminate\Support\Facades\Schema;
-use Gecche\Breeze\Tests\Models\Author;
-use Gecche\Breeze\Tests\Models\Book;
-use Gecche\Breeze\Tests\Models\User;
+use Gecche\Breeze\Tests\App\Models\Author;
+use Gecche\Breeze\Tests\App\Models\Book;
+use Gecche\Breeze\Tests\App\Models\User;
 use Gecche\Breeze\BreezeServiceProvider as ServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
+use Gecche\Breeze\Tests\App\TestServiceProvider;
 
 class BreezeMigrationsWithOwnershipsTestCase extends \Orchestra\Testbench\TestCase
 {

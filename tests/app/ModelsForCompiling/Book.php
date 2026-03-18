@@ -1,4 +1,4 @@
-<?php namespace Gecche\Breeze\Tests\Models;
+<?php namespace Gecche\Breeze\Tests\App\ModelsForCompiling;
 
 use Gecche\Breeze\Breeze;
 use Illuminate\Database\Eloquent\Model;
@@ -11,9 +11,8 @@ use Illuminate\Database\Eloquent\Model;
  */
 class Book extends Breeze
 {
-    use Relations\BookRelations;
 
-    /**
+	/**
      * The table associated with the model.
      *
      * @var string
@@ -37,11 +36,8 @@ class Book extends Breeze
 //        'userUpdatedBy' => [self::BELONGS_TO, 'related' => 'App\Models\User', 'foreignKey' => 'updated_by'],
 //        'userCreatedBy' => [self::BELONGS_TO, 'related' => 'App\Models\User', 'foreignKey' => 'created_by'],
         'author' => [self::BELONGS_TO, 'related' => Author::class],
-        'coauthors' => [
-            self::BELONGS_TO_MANY,
-            'related' => Author::class,
-            'table' => 'books_coauthors',
-            'relatedPivotKey' => 'coauthor_id',
+        'coauthors' => [self::BELONGS_TO_MANY, 'related' => Author::class, 'table' => 'books_coauthors',
+                'relatedPivotKey' => 'coauthor_id',
         ],
     ];
 

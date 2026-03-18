@@ -22,3 +22,5 @@ Homestead.json
 build
 
 composer.lock
+
+.phpunit.result.cache

@@ -10,15 +10,15 @@
         }
     ],
     "require": {
-        "laravel/framework": "^10.0",
-        "staudenmeir/belongs-to-through": "^2.5"
+        "laravel/framework": "^12.0",
+        "staudenmeir/belongs-to-through": "^2.17"
     },
     "require-dev": {
-        "mockery/mockery": "^1.5.1",
-        "phpunit/phpunit": "^9.6.0",
-        "orchestra/testbench": "^8.0",
-        "orchestra/testbench-browser-kit": "^8.0",
-        "diablomedia/phpunit-pretty-printer": "^5.0",
+        "mockery/mockery": "^1.6",
+        "phpunit/phpunit": "^11.5",
+        "orchestra/testbench": "^10.0",
+        "orchestra/testbench-browser-kit": "^10.0",
+        "codedungeon/phpunit-result-printer": "^0.1.0",
         "laravel/legacy-factories": "^1.0.4"
     },
     "autoload": {
@@ -34,7 +34,8 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Gecche\\Breeze\\Tests\\": "tests/src"
+            "Gecche\\Breeze\\Tests\\": "tests/src",
+            "Gecche\\Breeze\\Tests\\App\\": "tests/app"
         }
     },
     "scripts": {

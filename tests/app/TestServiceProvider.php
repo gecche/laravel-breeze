@@ -1,4 +1,4 @@
-<?php namespace Gecche\Breeze\Tests;
+<?php namespace Gecche\Breeze\Tests\App;
 
 use Illuminate\Support\ServiceProvider as BaseServiceProvider;
 

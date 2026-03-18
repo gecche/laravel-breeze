@@ -9,13 +9,15 @@
 namespace Gecche\Breeze\Tests;
 
 use Gecche\Breeze\Breeze;
-use Gecche\Breeze\Tests\ModelsForCompiling\Author;
-use Gecche\Breeze\Tests\ModelsForCompiling\Book;
+use Gecche\Breeze\Tests\App\ModelsForCompiling\Author;
+use Gecche\Breeze\Tests\App\ModelsForCompiling\Book;
 
 use Gecche\Breeze\BreezeServiceProvider as ServiceProvider;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\File;
+
+use Gecche\Breeze\Tests\App\TestServiceProvider;
 
 class BreezeCompileRelationsCommandTestCase extends \Orchestra\Testbench\TestCase
 {
@@ -43,11 +45,12 @@ class BreezeCompileRelationsCommandTestCase extends \Orchestra\Testbench\TestCas
     protected function setUp(): void
     {
 
-        $this->modelsDir = __DIR__ .'/ModelsForCompiling';
+        $appDir = __DIR__ . "/../app/";
+        $this->modelsDir = $appDir .'/ModelsForCompiling';
         $this->relationsDir = $this->modelsDir . '/Relations';
-        $this->shouldBeModelsDir = __DIR__ .'/Models';
+        $this->shouldBeModelsDir = $appDir .'/Models';
         $this->shouldBeRelationsDir = $this->shouldBeModelsDir . '/Relations';
-        $this->modelsNamespace = "Gecche\\Breeze\\Tests\\ModelsForCompiling";
+        $this->modelsNamespace = "Gecche\\Breeze\\Tests\\App\\ModelsForCompiling";
 
         $this->models = [
             'Book',

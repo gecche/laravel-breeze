@@ -1,4 +1,4 @@
-<?php namespace Gecche\Breeze\Tests\Models;
+<?php namespace Gecche\Breeze\Tests\App\Models;
 
 use Gecche\Breeze\Breeze;
 
