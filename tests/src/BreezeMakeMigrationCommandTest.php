@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Storage;
 use Gecche\Breeze\Tests\App\TestServiceProvider;
 
-class BreezeMakeMigrationCommandTestCase extends \Orchestra\Testbench\TestCase
+class BreezeMakeMigrationCommandTest extends \Orchestra\Testbench\TestCase
 {
 
 

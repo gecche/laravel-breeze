@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Gecche\Breeze\Tests\App\TestServiceProvider;
 
-class BreezeHasValidationTestCase extends \Orchestra\Testbench\TestCase
+class BreezeHasValidationTest extends \Orchestra\Testbench\TestCase
 {
 
     use RefreshDatabase;
