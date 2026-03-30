@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Gecche\Breeze\Tests\App\TestServiceProvider;
 
-class BreezeMigrationsWithOwnershipsTestCase extends \Orchestra\Testbench\TestCase
+class BreezeMigrationsWithOwnershipsTest extends \Orchestra\Testbench\TestCase
 {
 
     use RefreshDatabase;

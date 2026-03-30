@@ -1,9 +1,16 @@
+[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
+[![Laravel](https://img.shields.io/badge/Laravel-13.x-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-12.x-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-11.x-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-10.x-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-9.x-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-8.x-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-7.x-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-6.x-orange.svg?style=flat-square)](http://laravel.com)
+[![Laravel](https://img.shields.io/badge/Laravel-5.x-orange.svg?style=flat-square)](http://laravel.com)
+
 # laravel-breeze
 Collection of traits for improving eloquent model's features
-
-[![Laravel](https://img.shields.io/badge/Laravel-5.x-orange.svg?style=flat-square)](http://laravel.com)
-[![Laravel](https://img.shields.io/badge/Laravel-6.x-orange.svg?style=flat-square)](http://laravel.com)
-[![License](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat-square)](https://tldrlegal.com/license/mit-license)
 
 ## Description
 Clean and static relations definition, validation with handling of `unique` rule and model's ownerships.  This package allows a single Laravel installation to work with multiple HTTP domains.
@@ -38,6 +45,10 @@ The package is fully tested.
  7.x      | 3.x
  8.x      | 4.x
  9.x      | 5.x
+ 10.x     | 10.x
+ 11.x     | 11.x
+ 12.x     | 12.x
+ 13.x     | 13.x
 
 ### Installation
 
@@ -46,7 +57,7 @@ Add gecche/laravel-breeze as a requirement to composer.json:
 ```javascript
 {
     "require": {
-        "gecche/laravel-breeze": "5.*"
+        "gecche/laravel-breeze": "13.*"
     }
 }
 ```

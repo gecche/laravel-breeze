@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\File;
 
 use Gecche\Breeze\Tests\App\TestServiceProvider;
 
-class BreezeCompileRelationsCommandTestCase extends \Orchestra\Testbench\TestCase
+class BreezeCompileRelationsCommandTest extends \Orchestra\Testbench\TestCase
 {
 
 

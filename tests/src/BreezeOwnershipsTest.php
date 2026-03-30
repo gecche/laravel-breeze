@@ -21,7 +21,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Gecche\Breeze\Tests\App\TestServiceProvider;
 
-class BreezeOwnershipsTestCase extends \Orchestra\Testbench\TestCase
+class BreezeOwnershipsTest extends \Orchestra\Testbench\TestCase
 {
 
     protected $modelsNamespace;

@@ -23,7 +23,7 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Gecche\Breeze\Tests\App\TestServiceProvider;
 
-class BreezeHasRelationshipsTestCase extends \Orchestra\Testbench\TestCase
+class BreezeHasRelationshipsTest extends \Orchestra\Testbench\TestCase
 {
 
 
